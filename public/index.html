@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f1e8">
+<title>Avidezuri – Customized perfume, delivered across Karachi</title>
+<meta name="description" content="Avidezuri customized perfumes in 30, 50 and 100 ml. Order on WhatsApp, delivery across Karachi from Rs 200, pay cash on delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Newsreader:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="#top" aria-label="Avidezuri home"><img class="brandmark" src="/assets/logo.png" alt="Avidezuri — Customized Perfume"></a>
+    <nav class="top-actions" aria-label="Main navigation">
+      <a href="#shop">Shop</a><a href="#order">Your order</a>
+      <span class="top-note">Cash on delivery</span>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <img class="hero-img" src="/images/hero-banner.jpg" width="1600" height="595" alt="Avidezuri customized perfume: premium quality, long lasting, unisex fragrances, crafted for you">
+  <div class="wrap">
+    <div class="hero-card">
+      <h1>Perfume made around you.</h1>
+      <p>Choose your fragrance in 30, 50 or 100 ml. We deliver across Karachi and you pay cash when it arrives.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#shop">Shop perfumes</a>
+        <a class="btn ghost" href="https://wa.me/923181230098" target="_blank" rel="noopener noreferrer">Ask on WhatsApp</a>
+      </div>
+      <ul class="facts">
+        <li><b>Rs 200 to 400</b>Delivery in Karachi</li>
+        <li><b>Cash</b>Pay on delivery</li>
+        <li><b>30, 50, 100 ml</b>Pick your size</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="steps wrap" aria-label="How ordering works">
+  <ol>
+    <li><b>Choose</b><br>Pick your perfumes and sizes below.</li>
+    <li><b>Send</b><br>Share your order and address on WhatsApp.</li>
+    <li><b>Pay cash</b><br>Pay when your order reaches your door.</li>
+  </ol>
+</section>
+
+<main>
+  <section id="shop" class="block wrap" aria-labelledby="shop-h">
+    <div class="section-head">
+      <h2 id="shop-h">Choose your perfumes</h2>
+      <p class="hint">Select a fragrance, choose a bottle size and add it to your order.</p>
+    </div>
+    <div class="shop-tools">
+      <div class="category-tabs" role="group" aria-label="Product categories">
+        <button class="category-btn" type="button" data-category="all" aria-pressed="true">All Products</button>
+        <button class="category-btn" type="button" data-category="exclusive" aria-pressed="false">Exclusive</button>
+        <button class="category-btn" type="button" data-category="budget" aria-pressed="false">Budget Friendly</button>
+      </div>
+      <input id="find" type="search" placeholder="Search perfumes" aria-label="Search perfumes">
+    </div>
+    <div class="grid" id="list"></div>
+    <p id="none" hidden>No perfumes match your search.</p>
+  </section>
+
+  <section id="order" class="block wrap" aria-labelledby="order-h">
+    <div class="section-head">
+      <h2 id="order-h">Your order</h2>
+      <p class="hint">Review your selection and share your delivery details. You pay when your order arrives.</p>
+    </div>
+    <div class="order-layout">
+      <div class="order-panel">
+        <h3>Order summary</h3>
+        <ul id="summary" aria-live="polite"></ul>
+        <div class="total"><span>Total, pay on delivery</span><span id="total"></span></div>
+      </div>
+      <div class="order-panel">
+        <h3>Delivery details</h3>
+        <form id="form" novalidate>
+          <label>Full name (required) <input id="f-name" autocomplete="name" required aria-required="true" placeholder="Your full name"></label>
+          <label>Phone number (required) <input id="f-phone" type="tel" autocomplete="tel" required aria-required="true" placeholder="03XX-XXXXXXX"></label>
+          <label>Delivery area in Karachi (required) <select id="f-area" required aria-required="true"><option value="">Select your area</option></select></label>
+          <label>Delivery address (required) <textarea id="f-addr" autocomplete="street-address" required aria-required="true" placeholder="House, street and nearby landmark"></textarea></label>
+          <label>Notes for us (optional) <input id="f-notes" placeholder="Any delivery instructions?"></label>
+          <p class="msg" id="msg" role="status"></p>
+          <button type="button" class="btn" id="send-wa">Send order on WhatsApp</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <section class="footer-service" aria-labelledby="customer-service-title">
+      <div class="footer-service-copy">
+        <p class="footer-kicker">We're here to help</p>
+        <h2 id="customer-service-title">Customer Service</h2>
+        <p>Need help with an order or choosing your scent? Get in touch with us.</p>
+        <a class="footer-whatsapp" href="https://wa.me/923181230098" target="_blank" rel="noopener noreferrer" aria-label="Contact Avidezuri customer service on WhatsApp at 0318-1230098">
+          <span class="footer-wa-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.1 3.9A11.35 11.35 0 0 0 12.02.55C5.75.55.65 5.65.65 11.92c0 2 .52 3.95 1.5 5.66L.55 23.45l6.02-1.58a11.4 11.4 0 0 0 5.45 1.39h.01c6.27 0 11.37-5.1 11.37-11.37 0-3.04-1.18-5.89-3.3-7.99ZM12.03 21.3a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.57.94.95-3.48-.23-.36a9.42 9.42 0 0 1-1.45-5.02c0-5.2 4.24-9.44 9.46-9.44a9.38 9.38 0 0 1 6.68 2.77 9.38 9.38 0 0 1 2.77 6.68c0 5.21-4.24 9.44-9.44 9.44Zm5.18-7.07c-.28-.14-1.65-.81-1.9-.9-.25-.09-.44-.14-.63.14-.19.28-.72.9-.88 1.08-.16.19-.33.21-.61.07-.28-.14-1.18-.44-2.25-1.39-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.13-.12.28-.33.42-.49.14-.16.19-.28.28-.47.09-.19.05-.35-.02-.49-.07-.14-.63-1.51-.86-2.07-.23-.54-.46-.47-.63-.48l-.54-.01c-.19 0-.49.07-.75.35-.26.28-.98.96-.98 2.33s1 2.7 1.14 2.89c.14.19 1.97 3.01 4.77 4.22.67.29 1.19.46 1.6.58.67.21 1.28.18 1.76.11.54-.08 1.65-.67 1.88-1.32.23-.65.23-1.21.16-1.32-.07-.12-.26-.19-.54-.33Z" fill="currentColor"/></svg>
+          </span>
+          <span><small>WhatsApp Customer Service</small><strong>0318-1230098</strong></span>
+        </a>
+      </div>
+      <div class="footer-social">
+        <p>Connect with Avidezuri</p>
+        <div class="footer-social-links">
+          <a href="https://www.instagram.com/avidezuriperfumery/" target="_blank" rel="noopener noreferrer" aria-label="Visit Avidezuri on Instagram" title="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M7.2 2.1h9.6a5.1 5.1 0 0 1 5.1 5.1v9.6a5.1 5.1 0 0 1-5.1 5.1H7.2a5.1 5.1 0 0 1-5.1-5.1V7.2a5.1 5.1 0 0 1 5.1-5.1Zm0 1.9A3.2 3.2 0 0 0 4 7.2v9.6A3.2 3.2 0 0 0 7.2 20h9.6a3.2 3.2 0 0 0 3.2-3.2V7.2A3.2 3.2 0 0 0 16.8 4H7.2Zm4.8 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8Zm0 1.9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.1-3.3a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3Z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/people/Avidezuri/61583380686247/" target="_blank" rel="noopener noreferrer" aria-label="Visit Avidezuri on Facebook" title="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M13.45 21v-8.2h2.76l.41-3.2h-3.17V7.56c0-.93.26-1.57 1.59-1.57h1.7V3.13c-.29-.04-1.3-.13-2.47-.13-2.45 0-4.13 1.5-4.13 4.25V9.6H7.36v3.2h2.78V21h3.31Z"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+    <div class="footer-bottom">
+      <div class="footer-bottom-brand"><span class="footer-brand">Avidezuri</span><span class="footer-note">We confirm every order by message before delivery.</span></div>
+      <div>© <span id="yr"></span> Avidezuri · Customized Perfume</div>
+    </div>
+  </div>
+</footer>
+
+<div id="bar" hidden><span id="bar-n"></span><a class="btn" href="#order">View order</a></div>
+
+<script src="/js/app.js" defer></script>
+</body>
+</html>
