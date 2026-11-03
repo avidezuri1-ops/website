@@ -43,7 +43,7 @@ var EXCLUSIVE_PRODUCTS = [
   "DE ANGEL", "DE DESIRE", "DE NIGHT", "DE AQUA", "DE WOMEN", "DE MOUNTAIN",
   "DE CRISTAL ROUGE", "DE ALEE’SHA", "DE FANTASY", "DE SWIM", "DE BLACK", "DE NOIR"
 ];
-var EXCLUSIVE_PRICES = [1750, 2250, 3200];
+var EXCLUSIVE_PRICES = [1750, 2550, 4500];
 function productKey(n){
   return String(n).toLowerCase().replace(/[^a-z0-9]/g, "");
 }
