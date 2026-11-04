@@ -139,7 +139,8 @@ async function createOrder(request, env) {
   }
 }
 async function adminApi(request, env, url) {
-  const adminEmail = await verifySession(request, env);\n  if (!adminEmail) return fail("Authentication required.", 401);
+  const adminEmail = await verifySession(request, env);
+  if (!adminEmail) return fail("Authentication required.", 401);
   if (request.method === "GET" && url.pathname === "/api/admin/orders") {
     const q = safeText(url.searchParams.get("q"), 100);
     const status = safeText(url.searchParams.get("status"), 20);
