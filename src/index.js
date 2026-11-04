@@ -2,11 +2,32 @@ const ALLOWED_ORIGINS = new Set(["https://avidezuri.com", "https://www.avidezuri
 const STATUSES = new Set(["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"]);
 const SIZES = new Set([30, 50, 100]);
 
-function json(data, status = 200, headers = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...headers }
+const SECURITY_HEADERS = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Strict-Transport-Security": "max-age=31536000"
+};
+
+function secureResponse(response) {
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) headers.set(name, value);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
   });
+}
+
+function json(data, status = 200, headers = {}) {
+  const responseHeaders = new Headers({
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    ...headers
+  });
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) responseHeaders.set(name, value);
+  return new Response(JSON.stringify(data), { status, headers: responseHeaders });
 }
 function corsHeaders(origin) {
   if (!origin || !ALLOWED_ORIGINS.has(origin)) return {};
@@ -196,8 +217,8 @@ export default {
     const origin = request.headers.get("origin");
     const cors = corsHeaders(origin);
     if (request.method === "OPTIONS") {
-      if (!cors["access-control-allow-origin"]) return new Response(null, { status: 403 });
-      return new Response(null, { status: 204, headers: cors });
+      if (!cors["access-control-allow-origin"]) return secureResponse(new Response(null, { status: 403 }));
+      return secureResponse(new Response(null, { status: 204, headers: cors }));
     }
     if (origin && !ALLOWED_ORIGINS.has(origin)) return fail("Origin not allowed.", 403);
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
@@ -223,9 +244,9 @@ export default {
       return response;
     }
     if (url.hostname.toLowerCase() === "admin.avidezuri.com" && url.pathname === "/" && request.method === "GET" && env.ASSETS) {
-      return env.ASSETS.fetch(new Request(new URL("/admin/index.html", url), request));
+      return secureResponse(await env.ASSETS.fetch(new Request(new URL("/admin/index.html", url), request)));
     }
-    if (env.ASSETS) return env.ASSETS.fetch(request);
+    if (env.ASSETS) return secureResponse(await env.ASSETS.fetch(request));
     return fail("Not found.", 404);
   }
 };
