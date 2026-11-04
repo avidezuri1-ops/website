@@ -1,4 +1,4 @@
-const ALLOWED_ORIGINS = new Set(["https://avidezuri.com", "https://www.avidezuri.com"]);
+const ALLOWED_ORIGINS = new Set(["https://avidezuri.com", "https://www.avidezuri.com", "https://admin.avidezuri.com"]);
 const STATUSES = new Set(["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"]);
 const SIZES = new Set([30, 50, 100]);
 
@@ -118,6 +118,17 @@ async function adminApi(request, env, url) {
     const result = await env.DB.prepare(sql).bind(...values).all();
     return json({ orders: result.results || [] });
   }
+  const detailMatch = url.pathname.match(/^\/api\/admin\/orders\/(\d+)$/);
+  if (request.method === "GET" && detailMatch) {
+    const id = Number(detailMatch[1]);
+    const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
+    if (!order) return fail("Order not found.", 404);
+    const [items, history] = await Promise.all([
+      env.DB.prepare("SELECT product_name,size_ml,unit_price_pkr,quantity,line_total_pkr FROM order_items WHERE order_id=? ORDER BY id").bind(id).all(),
+      env.DB.prepare("SELECT old_status,new_status,changed_at,changed_by FROM order_status_history WHERE order_id=? ORDER BY changed_at DESC,id DESC").bind(id).all()
+    ]);
+    return json({ order, items: items.results || [], history: history.results || [] });
+  }
   const match = url.pathname.match(/^\/api\/admin\/orders\/(\d+)\/status$/);
   if (request.method === "PATCH" && match) {
     let body;
@@ -156,6 +167,9 @@ export default {
       const response = await adminApi(request, env, url);
       Object.entries(cors).forEach(([k,v]) => response.headers.set(k,v));
       return response;
+    }
+    if (url.hostname.toLowerCase() === "admin.avidezuri.com" && url.pathname === "/" && request.method === "GET" && env.ASSETS) {
+      return env.ASSETS.fetch(new Request(new URL("/admin/index.html", url), request));
     }
     if (env.ASSETS) return env.ASSETS.fetch(request);
     return fail("Not found.", 404);
