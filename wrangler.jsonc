@@ -5,5 +5,13 @@
   "assets": {
     "directory": "./public"
   },
-  "previews": {}
+  "previews": {},
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "avidezuri-orders",
+      "database_id": "1bb50c92-8f5f-4414-abfa-fd13081ae84b",
+      "migrations_dir": "migrations"
+    }
+  ]
 }
