@@ -206,7 +206,7 @@ export default {
         return fail("Orders must be submitted from the Avidezuri storefront.", 403);
       }
       const contentType = request.headers.get("content-type") || "";
-      if (!/^application\\/json(?:\\s*;|$)/i.test(contentType)) {
+      if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
         return fail("Order requests must use JSON.", 415);
       }
       const response = await createOrder(request, env);
