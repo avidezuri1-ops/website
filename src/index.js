@@ -27,27 +27,63 @@ function b64url(input) {
   const s = input.replace(/-/g, "+").replace(/_/g, "/");
   return Uint8Array.from(atob(s + "=".repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0));
 }
-async function verifyAccess(request, env) {
-  const token = request.headers.get("cf-access-jwt-assertion");
-  if (!token || !env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD) return false;
+function encode64url(bytes) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/=/g, "").replace(/\\+/g, "-").replace(/\\//g, "_");
+}
+function cookieValue(request, name) {
+  const cookie = request.headers.get("cookie") || "";
+  const part = cookie.split(";").map(x => x.trim()).find(x => x.startsWith(name + "="));
+  return part ? part.slice(name.length + 1) : "";
+}
+async function sessionKey(env) {
+  if (!env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length < 32) return null;
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(env.ADMIN_SESSION_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+}
+async function makeSession(email, env) {
+  const key = await sessionKey(env);
+  if (!key) throw new Error("Admin session secret is not configured.");
+  const payload = encode64url(new TextEncoder().encode(JSON.stringify({ email, exp: Math.floor(Date.now()/1000) + 8*60*60 })));
+  const data = new TextEncoder().encode(payload);
+  const signature = await crypto.subtle.sign("HMAC", key, data);
+  return payload + "." + encode64url(new Uint8Array(signature));
+}
+async function verifySession(request, env) {
+  const token = cookieValue(request, "avz_admin_session");
   const parts = token.split(".");
-  if (parts.length !== 3) return false;
+  if (parts.length !== 2) return null;
   try {
-    const header = JSON.parse(new TextDecoder().decode(b64url(parts[0])));
-    const claims = JSON.parse(new TextDecoder().decode(b64url(parts[1])));
-    const issuer = "https://" + env.ACCESS_TEAM_DOMAIN.replace(/^https?:\/\//, "").replace(/\/$/, "");
-    if (header.alg !== "RS256" || claims.iss !== issuer || !Array.isArray(claims.aud) || !claims.aud.includes(env.ACCESS_AUD)) return false;
-    const now = Math.floor(Date.now() / 1000);
-    if (typeof claims.exp !== "number" || claims.exp <= now || (claims.nbf && claims.nbf > now + 60)) return false;
-    const jwksUrl = issuer + "/cdn-cgi/access/certs";
-    const response = await fetch(jwksUrl, { cf: { cacheTtl: 300, cacheEverything: true } });
-    if (!response.ok) return false;
-    const jwks = await response.json();
-    const jwk = jwks.keys?.find(k => k.kid === header.kid && k.kty === "RSA");
-    if (!jwk) return false;
-    const key = await crypto.subtle.importKey("jwk", jwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
-    return crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64url(parts[2]), new TextEncoder().encode(parts[0] + "." + parts[1]));
-  } catch { return false; }
+    const key = await sessionKey(env);
+    if (!key) return null;
+    const valid = await crypto.subtle.verify("HMAC", key, b64url(parts[1]), new TextEncoder().encode(parts[0]));
+    if (!valid) return null;
+    const payload = JSON.parse(new TextDecoder().decode(b64url(parts[0])));
+    if (payload.email !== String(env.ADMIN_EMAIL || "").toLowerCase() || !Number.isFinite(payload.exp) || payload.exp <= Math.floor(Date.now()/1000)) return null;
+    return payload.email;
+  } catch { return null; }
+}
+async function adminAuth(request, env, url) {
+  if (url.pathname === "/api/admin/login" && request.method === "POST") {
+    if (request.headers.get("origin") !== "https://admin.avidezuri.com") return fail("Login must be submitted from the admin site.", 403);
+    if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length < 32) return fail("Admin login is not configured yet.", 503);
+    let body;
+    try { body = await request.json(); } catch { return fail("Invalid login details."); }
+    const email = safeText(body.email, 254).toLowerCase();
+    const password = typeof body.password === "string" ? body.password : "";
+    if (email !== env.ADMIN_EMAIL.toLowerCase() || password !== env.ADMIN_PASSWORD) return fail("Incorrect email or password.", 401);
+    const token = await makeSession(email, env);
+    return json({ ok: true, email }, 200, { "set-cookie": "avz_admin_session=" + token + "; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800" });
+  }
+  if (url.pathname === "/api/admin/logout" && request.method === "POST") {
+    if (request.headers.get("origin") !== "https://admin.avidezuri.com") return fail("Logout must be submitted from the admin site.", 403);
+    return json({ ok: true }, 200, { "set-cookie": "avz_admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0" });
+  }
+  if (url.pathname === "/api/admin/session" && request.method === "GET") {
+    const email = await verifySession(request, env);
+    return email ? json({ authenticated: true, email }) : fail("Authentication required.", 401);
+  }
+  return null;
 }
 async function createOrder(request, env) {
   let body;
@@ -103,7 +139,7 @@ async function createOrder(request, env) {
   }
 }
 async function adminApi(request, env, url) {
-  if (!(await verifyAccess(request, env))) return fail("Authentication required.", 401);
+  const adminEmail = await verifySession(request, env);\n  if (!adminEmail) return fail("Authentication required.", 401);
   if (request.method === "GET" && url.pathname === "/api/admin/orders") {
     const q = safeText(url.searchParams.get("q"), 100);
     const status = safeText(url.searchParams.get("status"), 20);
@@ -141,7 +177,7 @@ async function adminApi(request, env, url) {
     if (current.status === next) return json({ ok: true, status: next });
     await env.DB.batch([
       env.DB.prepare("UPDATE orders SET status=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(next, id),
-      env.DB.prepare("INSERT INTO order_status_history (order_id,old_status,new_status,changed_by) VALUES (?,?,?,?)").bind(id, current.status, next, "cloudflare-access")
+      env.DB.prepare("INSERT INTO order_status_history (order_id,old_status,new_status,changed_by) VALUES (?,?,?,?)").bind(id, current.status, next, ("admin:" + adminEmail))
     ]);
     return json({ ok: true, status: next });
   }
