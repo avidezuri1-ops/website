@@ -78,8 +78,9 @@ async function createOrder(request, env) {
   const total = subtotal + zone.fee_pkr;
   if (!Number.isSafeInteger(total) || total > 10000000) return fail("Order total is outside the allowed range.");
   const number = orderNumber();
+  let inserted = null;
   try {
-    const inserted = await env.DB.prepare(
+    inserted = await env.DB.prepare(
       "INSERT INTO orders (order_number,customer_name,phone,city,area,address,notes,subtotal_pkr,delivery_fee_pkr,total_pkr,payment_method,status) VALUES (?,?,?,?,?,?,?,?,?,?, 'COD','Pending') RETURNING id, order_number, total_pkr, created_at"
     ).bind(number, customerName, phone, city, area, address, notes || null, subtotal, zone.fee_pkr, total).first();
     const statements = normalized.map(item => env.DB.prepare(
@@ -89,6 +90,15 @@ async function createOrder(request, env) {
     await env.DB.batch(statements);
     return json({ ok: true, order: { order_number: inserted.order_number, subtotal_pkr: subtotal, delivery_fee_pkr: zone.fee_pkr, total_pkr: total, payment_method: "COD", created_at: inserted.created_at }, items: normalized });
   } catch (error) {
+    // If line-item/history insertion fails after the order row is created,
+    // remove the incomplete order so the customer is not left with a partial record.
+    if (inserted?.id) {
+      try {
+        await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(inserted.id).run();
+      } catch (cleanupError) {
+        console.error("Order cleanup failed for order id:", inserted.id);
+      }
+    }
     return fail("Could not save your order. Please try again or contact Avidezuri.", 500);
   }
 }
