@@ -283,6 +283,110 @@ $("send-wa").onclick = async function(){
 
   if(!check()) return;
 
+  // Open WhatsApp window immediately to avoid popup blocking.
+  var waWindow = window.open("about:blank", "_blank");
+
+  if(!waWindow){
+    $("msg").className = "msg err";
+    $("msg").textContent =
+      "Please allow pop-ups for this website and try again.";
+    return;
+  }
+
+  var items = [];
+
+  each(function(p, sz, n){
+    items.push({
+      slug: slug(p.name),
+      size_ml: parseInt(sz, 10),
+      quantity: n
+    });
+  });
+
+  var originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Saving your order...";
+
+  try {
+    var response = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer_name: $("f-name").value.trim(),
+        phone: $("f-phone").value.trim(),
+        city: "Karachi",
+        area: area,
+        address: $("f-addr").value.trim(),
+        notes: $("f-notes").value.trim(),
+        items: items
+      })
+    });
+
+    var result = await response.json();
+
+    if(!response.ok || !result.ok || !result.order){
+      throw new Error(result.error || "Could not save your order.");
+    }
+
+    // Use prices and totals confirmed by the database.
+    var lines = ["New order – Avidezuri", "", "Items:"];
+
+    (result.items || []).forEach(function(item){
+      lines.push(
+        "- " + item.quantity + " × " +
+        item.product_name + " (" + item.size_ml +
+        " ml) – " + money(item.line_total_pkr)
+      );
+    });
+
+    lines.push(
+      "",
+      "Subtotal: " + money(result.order.subtotal_pkr),
+      "Delivery (" + area + "): " +
+        money(result.order.delivery_fee_pkr),
+      "Total: " + money(result.order.total_pkr) +
+        " (cash on delivery)",
+      "",
+      "Order Number: " + result.order.order_number,
+      "Database Status: Saved successfully",
+      "",
+      "Name: " + $("f-name").value.trim(),
+      "Phone: " + $("f-phone").value.trim(),
+      "Area: " + area + ", Karachi",
+      "Address: " + $("f-addr").value.trim()
+    );
+
+    var notes = $("f-notes").value.trim();
+    if(notes) lines.push("Notes: " + notes);
+
+    $("msg").className = "msg";
+    $("msg").textContent =
+      "Order " + result.order.order_number +
+      " saved successfully. Opening WhatsApp...";
+
+    var whatsappURL =
+      "https://wa.me/" + CONFIG.whatsapp +
+      "?text=" + encodeURIComponent(lines.join("\n"));
+
+    waWindow.location.href = whatsappURL;
+
+  } catch(error) {
+    if(waWindow && !waWindow.closed){
+      waWindow.close();
+    }
+
+    $("msg").className = "msg err";
+    $("msg").textContent =
+      error.message || "Order could not be saved. Please try again.";
+
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+};
+
+  if(!check()) return;
+
   var items = [];
 
   each(function(p, sz, n){
