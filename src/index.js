@@ -201,7 +201,11 @@ export default {
       return response;
     }
     if (url.pathname.startsWith("/api/admin/")) {
-      const response = await adminApi(request, env, url);
+      if ((request.method === "POST" || request.method === "PATCH") && origin !== "https://admin.avidezuri.com") {
+        return fail("Admin requests must come from the admin site.", 403);
+      }
+      const authResponse = await adminAuth(request, env, url);
+      const response = authResponse || await adminApi(request, env, url);
       Object.entries(cors).forEach(([k,v]) => response.headers.set(k,v));
       return response;
     }
