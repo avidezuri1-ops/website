@@ -88,8 +88,12 @@ async function adminAuth(request, env, url) {
   return null;
 }
 async function createOrder(request, env) {
+  let rawBody;
+  try { rawBody = await request.text(); } catch { return fail("Could not read order details."); }
+  if (new TextEncoder().encode(rawBody).byteLength > 32768) return fail("Order request is too large.", 413);
   let body;
-  try { body = await request.json(); } catch { return fail("Invalid JSON body."); }
+  try { body = JSON.parse(rawBody); } catch { return fail("Invalid JSON body."); }
+  if (!body || typeof body !== "object" || Array.isArray(body)) return fail("Invalid order details.");
   const customerName = safeText(body.customer_name, 100);
   const phone = safeText(body.phone, 30);
   const city = safeText(body.city || "Karachi", 80);
@@ -198,6 +202,13 @@ export default {
     if (origin && !ALLOWED_ORIGINS.has(origin)) return fail("Origin not allowed.", 403);
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
     if (url.pathname === "/api/orders" && request.method === "POST") {
+      if (origin !== "https://avidezuri.com" && origin !== "https://www.avidezuri.com") {
+        return fail("Orders must be submitted from the Avidezuri storefront.", 403);
+      }
+      const contentType = request.headers.get("content-type") || "";
+      if (!/^application\\/json(?:\\s*;|$)/i.test(contentType)) {
+        return fail("Order requests must use JSON.", 415);
+      }
       const response = await createOrder(request, env);
       Object.entries(cors).forEach(([k,v]) => response.headers.set(k,v));
       return response;
