@@ -66,7 +66,16 @@ async function verifySession(request, env) {
 async function adminAuth(request, env, url) {
   if (url.pathname === "/api/admin/login" && request.method === "POST") {
     if (request.headers.get("origin") !== "https://admin.avidezuri.com") return fail("Login must be submitted from the admin site.", 403);
-    if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length < 32) return fail("Admin login is not configured yet.", 503);
+    if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length < 32) {
+      // Temporary diagnostic: log presence only, never secret values.
+      console.warn("Admin login configuration check", {
+        emailConfigured: Boolean(env.ADMIN_EMAIL),
+        passwordConfigured: Boolean(env.ADMIN_PASSWORD),
+        sessionSecretConfigured: Boolean(env.ADMIN_SESSION_SECRET),
+        sessionSecretLength: typeof env.ADMIN_SESSION_SECRET === "string" ? env.ADMIN_SESSION_SECRET.length : 0
+      });
+      return fail("Admin login is not configured yet.", 503);
+    }
     let body;
     try { body = await request.json(); } catch { return fail("Invalid login details."); }
     const email = safeText(body.email, 254).toLowerCase();
