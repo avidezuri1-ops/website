@@ -93,7 +93,8 @@ function tryPhoto(art, p){
     if(k >= exts.length) return;
     var img = new Image();
     img.alt = p.name;
-    img.loading = "lazy";
+    // This image is preloaded before insertion; lazy loading on a detached Image can prevent the request from starting.
+    img.loading = "eager";
     img.decoding = "async";
     img.onload = function(){ art.textContent = ""; art.appendChild(img); art.classList.add("photo"); };
     img.onerror = function(){ k++; next(); };
