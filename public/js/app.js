@@ -87,12 +87,14 @@ function slug(n){
 /* Looks for images/<perfume-name>.jpg (or png, webp, jpeg). If none is found, the bottle drawing stays. */
 function tryPhoto(art, p){
   var base = p.image || "images/" + slug(p.name);
-  var exts = p.image ? [""] : ["jpg", "png", "webp", "jpeg"];
+  var exts = p.image ? [""] : ["png"];
   var k = 0;
   (function next(){
     if(k >= exts.length) return;
     var img = new Image();
     img.alt = p.name;
+    img.loading = "lazy";
+    img.decoding = "async";
     img.onload = function(){ art.textContent = ""; art.appendChild(img); art.classList.add("photo"); };
     img.onerror = function(){ k++; next(); };
     img.src = exts[k] ? base + "." + exts[k] : base;
