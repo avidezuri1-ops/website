@@ -272,10 +272,76 @@ function check(){
 
 $("f-area").onchange = function(){ this.setAttribute("aria-invalid", "false"); renderSummary(); };
 
-$("send-wa").onclick = function(){
-  if(!CONFIG.whatsapp){ $("msg").className = "msg err"; $("msg").textContent = "WhatsApp number not set yet."; return; }
+$("send-wa").onclick = async function(){
+  var button = $("send-wa");
+
+  if(!CONFIG.whatsapp){
+    $("msg").className = "msg err";
+    $("msg").textContent = "WhatsApp number not set yet.";
+    return;
+  }
+
   if(!check()) return;
-  window.open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(buildMessage()), "_blank");
+
+  var items = [];
+
+  each(function(p, sz, n){
+    items.push({
+      slug: slug(p.name),
+      size_ml: parseInt(sz, 10),
+      quantity: n
+    });
+  });
+
+  var originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Saving your order...";
+
+  try {
+    var response = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer_name: $("f-name").value.trim(),
+        phone: $("f-phone").value.trim(),
+        city: "Karachi",
+        area: area,
+        address: $("f-addr").value.trim(),
+        notes: $("f-notes").value.trim(),
+        items: items
+      })
+    });
+
+    var result = await response.json();
+
+    if(!response.ok || !result.ok || !result.order){
+      throw new Error(result.error || "Could not save your order.");
+    }
+
+    var message = buildMessage() +
+      "\n\nOrder Number: " + result.order.order_number +
+      "\nDatabase Status: Saved successfully";
+
+    $("msg").className = "msg";
+    $("msg").textContent =
+      "Order " + result.order.order_number +
+      " saved successfully. Opening WhatsApp...";
+
+    window.open(
+      "https://wa.me/" + CONFIG.whatsapp +
+      "?text=" + encodeURIComponent(message),
+      "_blank",
+      "noopener"
+    );
+
+  } catch(error) {
+    $("msg").className = "msg err";
+    $("msg").textContent =
+      error.message || "Order could not be saved. Please try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
 };
 
 function applyFilters(){
