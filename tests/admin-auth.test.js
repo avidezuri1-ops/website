@@ -85,18 +85,18 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
 
 
 test("preview origin is trusted only when explicitly configured for preview",async()=>{
-  const env={PREVIEW_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com",PREVIEW_ADMIN_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com"};
-  const preflight=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{method:"OPTIONS",headers:{origin:env.PREVIEW_ORIGIN}}),env);
+  const env={APP_ENV:"preview"};
+  const preflight=await worker.fetch(new Request("https://fix-preview-d1-isolation.avidezuri.com/api/admin/login",{method:"OPTIONS",headers:{origin:"https://fix-preview-d1-isolation.avidezuri.com"}}),env);
   assert.equal(preflight.status,204);
-  const login=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:env.PREVIEW_ADMIN_ORIGIN,"content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),env);
+  const login=await worker.fetch(new Request("https://fix-preview-d1-isolation.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:"https://fix-preview-d1-isolation.avidezuri.com","content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),env);
   assert.equal(login.status,503);
-  const production=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:env.PREVIEW_ORIGIN,"content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),{});
+  const production=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:"https://fix-preview-d1-isolation.avidezuri.com","content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),{});
   assert.equal(production.status,403);
 });
 
 
 test("unconfigured branch preview cannot read production admin data",async()=>{
-  const response=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/orders"),{DB:{prepare(){throw new Error("production database must not be queried")}}});
+  const response=await worker.fetch(new Request("https://fix-preview-d1-isolation.avidezuri.com/api/admin/orders"),{DB:{prepare(){throw new Error("production database must not be queried")}}});
   assert.equal(response.status,503);
   assert.match((await response.json()).error,/isolated database/i);
 });
