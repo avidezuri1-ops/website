@@ -56,6 +56,14 @@ CONFIG.products = CONFIG.products.map(function(p, i){
   return p;
 });
 
+/* Shuffle the complete catalogue once on each fresh page load. */
+for(var shuffleIndex = CONFIG.products.length - 1; shuffleIndex > 0; shuffleIndex--){
+  var shuffleTarget = Math.floor(Math.random() * (shuffleIndex + 1));
+  var shuffleProduct = CONFIG.products[shuffleIndex];
+  CONFIG.products[shuffleIndex] = CONFIG.products[shuffleTarget];
+  CONFIG.products[shuffleTarget] = shuffleProduct;
+}
+
 var qty = CONFIG.products.map(function(){ return CONFIG.sizes.map(function(){ return 0; }); });
 var sel = CONFIG.products.map(function(){ return 0; });
 var cards = [];
