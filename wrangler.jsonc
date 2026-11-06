@@ -8,13 +8,21 @@
     "binding": "ASSETS",
     "run_worker_first": true
   },
-  "previews": {},
+  "previews": {
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "avidezuri-preview",
+        "database_id": "09ad3f01-e071-46d2-ab12-1abf48609593",
+        "migrations_dir": "migrations"
+      }
+    ]
+  },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "avidezuri-orders",
       "database_id": "1bb50c92-8f5f-4414-abfa-fd13081ae84b",
-      "preview_database_id": "09ad3f01-e071-46d2-ab12-1abf48609593",
       "migrations_dir": "migrations"
     }
   ]
