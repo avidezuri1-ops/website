@@ -5,6 +5,7 @@
   "description": "Avidezuri responsive static perfume storefront deployed on Cloudflare Workers.",
   "scripts": {
     "dev": "wrangler dev",
+    "preview": "wrangler preview",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {
