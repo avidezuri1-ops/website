@@ -43,5 +43,6 @@ No remote migration, secret change or production deployment is authorized by thi
 - Deploy preview builds with `npm run deploy:preview`; keep production deployments on `npm run deploy`.
 - Configure the Cloudflare Workers Builds preview deployment command to use `npm run deploy:preview` and the production deployment command to use `npm run deploy`. Do not use the production command for branch previews.
 - The preview origin is explicitly allowlisted only in the preview environment. Production does not trust the preview hostname.
+- API requests on non-production Avidezuri hostnames fail closed unless the Worker has the explicit `APP_ENV=preview` flag. This prevents a branch preview accidentally deployed with the default production binding from reading or changing production data.
 - Apply the additive migrations to the preview database first and verify the preview DB binding before attempting any admin login. This repository change does not apply migrations or deploy either environment.
 - Before merge, verify the Cloudflare branch-preview workflow actually invokes the preview command and points at the preview Worker. If the Cloudflare dashboard is configured to run a different command, update that setting before testing.
