@@ -82,3 +82,13 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   const response=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/users",{method:"POST",headers:{origin:"https://admin.avidezuri.com",cookie:"avz_admin_session="+payload+"."+sig,"content-type":"application/json"},body:JSON.stringify({})}),env);
   assert.equal(response.status,403);
 });
+
+\ntest("preview origin is trusted only when explicitly configured for preview",async()=>{
+  const env={PREVIEW_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com",PREVIEW_ADMIN_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com"};
+  const preflight=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{method:"OPTIONS",headers:{origin:env.PREVIEW_ORIGIN}}),env);
+  assert.equal(preflight.status,204);
+  const login=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:env.PREVIEW_ADMIN_ORIGIN,"content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),env);
+  assert.equal(login.status,503);
+  const production=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:env.PREVIEW_ORIGIN,"content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),{});
+  assert.equal(production.status,403);
+});
