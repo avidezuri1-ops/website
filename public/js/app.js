@@ -122,6 +122,35 @@ function renderZones(){
   all.forEach(function(a){ var o = el("option", "", a.name); o.value = a.name; o.dataset.fee = a.fee; $("f-area").appendChild(o); });
 }
 
+function renderFeaturedSlider(){
+  var track = $("featured-track");
+  if(!track) return;
+  track.textContent = "";
+  var featured = CONFIG.products.slice();
+  // Shuffle the complete catalogue for each fresh page load.
+  for(var i = featured.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = featured[i]; featured[i] = featured[j]; featured[j] = temp;
+  }
+  featured.forEach(function(p, index){
+    var link = el("a", "featured-card");
+    link.href = "#shop";
+    var photo = el("div", "featured-photo");
+    var img = el("img");
+    img.src = p.image || "images/" + slug(p.name) + ".png";
+    img.alt = p.name + " perfume bottle";
+    img.loading = "lazy";
+    img.width = 800; img.height = 800;
+    img.onerror = function(){ this.onerror = null; this.src = "images/" + slug(p.name) + ".jpg"; };
+    photo.appendChild(img);
+    link.appendChild(photo);
+    link.appendChild(el("span", "featured-number", String(index + 1).padStart(2, "0") + " / FEATURED"));
+    link.appendChild(el("strong", "", p.name));
+    link.appendChild(el("span", "featured-link", "Explore fragrance ↗"));
+    track.appendChild(link);
+  });
+}
+
 function renderList(){
   var list = $("list");
   list.textContent = "";
@@ -419,5 +448,6 @@ $("find").oninput = applyFilters;
 
 $("yr").textContent = new Date().getFullYear();
 renderZones();
+renderFeaturedSlider();
 renderList();
 renderSummary();
