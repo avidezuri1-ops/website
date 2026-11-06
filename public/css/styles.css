@@ -268,3 +268,34 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .footer-whatsapp small{color:#c9c1b5}
 .footer-whatsapp strong{color:#f3eee5}
 .footer-whatsapp:hover strong{color:#e2c990}
+
+
+/* ===== Premium motion polish ===== */
+@keyframes avzProductEnter{
+  from{opacity:0;transform:translate3d(0,22px,0) scale(.985);filter:blur(3px)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+@keyframes avzFeaturedEnter{
+  from{opacity:0;transform:translate3d(0,16px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+.card.motion-card{opacity:0;transform:translateY(18px) scale(.99)}
+.card.motion-card.motion-visible{animation:avzProductEnter .65s cubic-bezier(.2,.75,.2,1) both;animation-delay:var(--motion-delay,0ms)}
+.card .art img,.card .art svg{transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .7s ease}
+.card:hover .art img{transform:scale(1.045)}
+.card:hover .art svg{transform:translateY(-5px) scale(1.04)}
+.featured-card{animation:avzFeaturedEnter .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(min(var(--motion-index,0),10)*35ms)}
+.hero-cta .btn{position:relative;overflow:hidden;transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease}
+.hero-cta .btn:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(200,167,106,.18)}
+.slider-arrow:active,.category-btn:active,.stepper button:active{transform:scale(.96)}
+.category-btn,.pill,.stepper button,.footer-social-links a,.footer-whatsapp{transition:transform .22s ease,background .22s ease,border-color .22s ease,color .22s ease,box-shadow .22s ease}
+.category-btn:hover,.pill:hover{transform:translateY(-2px)}
+.footer-whatsapp:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(200,167,106,.1)}
+.footer-social-links a:hover{transform:translateY(-3px)}
+.reveal{will-change:opacity,transform}
+@media(prefers-reduced-motion:reduce){
+  .card.motion-card{opacity:1;transform:none}
+  .card.motion-card.motion-visible,.featured-card{animation:none!important}
+  .hero-cta .btn,.category-btn,.pill,.stepper button,.footer-social-links a,.footer-whatsapp{transition:none!important}
+  .reveal{will-change:auto}
+}
