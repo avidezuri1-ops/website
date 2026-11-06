@@ -335,9 +335,11 @@ async function adminApi(request,env,url) {
   if(request.method==="POST" && url.pathname.match(/^\/api\/admin\/users\/\d+\/reset-password$/)) {
     if(admin.role!=="super_admin")return fail("Super Admin access required.",403);
     const id=Number(url.pathname.match(/\d+/)?.[0]);if(id===admin.id)return fail("Use your own password-change flow.",403);
+    const target=await env.DB.prepare("SELECT id FROM admin_users WHERE id=?").bind(id).first();
+    if(!target)return fail("Administrator not found.",404);
     const temporaryPassword=randomToken(18),salt=crypto.getRandomValues(new Uint8Array(16)),iterations=310000,hash=await passwordHash(temporaryPassword,salt,iterations);
     const result=await env.DB.prepare("UPDATE admin_users SET password_hash=?,password_salt=?,password_iterations=?,must_change_password=1,session_version=session_version+1,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(encode64url(hash),encode64url(salt),iterations,id).run();
-    if(!result.success)return fail("Could not reset administrator password.",404);
+    if(!result.success)return fail("Could not reset administrator password.",500);
     await writeAudit(env,admin,id,"admin.password_reset");
     return json({ok:true,temporary_password:temporaryPassword});
   }
