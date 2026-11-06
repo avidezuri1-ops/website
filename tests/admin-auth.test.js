@@ -92,3 +92,9 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   const production=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/login",{method:"POST",headers:{origin:env.PREVIEW_ORIGIN,"content-type":"application/json"},body:JSON.stringify({email:"preview@example.com",password:"test"})}),{});
   assert.equal(production.status,403);
 });
+
+\ntest("unconfigured branch preview cannot read production admin data",async()=>{
+  const response=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/orders"),{DB:{prepare(){throw new Error("production database must not be queried")}}});
+  assert.equal(response.status,503);
+  assert.match((await response.json()).error,/isolated database/i);
+});
