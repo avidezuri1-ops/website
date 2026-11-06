@@ -76,9 +76,9 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   const env={DB:db,ADMIN_SESSION_SECRET:"b".repeat(48)};
   const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(env.ADMIN_SESSION_SECRET),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
   const csrf="csrf-test-token";
-  const payload= btoa(JSON.stringify({id:1,email:"owner@example.com",sv:1,csrf,exp:Math.floor(Date.now()/1000)+300})).replace(/=/g,"").replace(/\\+/g,"-").replace(/\\//g,"_");
+  const payload= btoa(JSON.stringify({id:1,email:"owner@example.com",sv:1,csrf,exp:Math.floor(Date.now()/1000)+300})).replace(/=/g,"").replaceAll("+","-").replaceAll("/","_");
   const signature=await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(payload));
-  const sig=btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g,"").replace(/\\+/g,"-").replace(/\\//g,"_");
+  const sig=btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g,"").replaceAll("+","-").replaceAll("/","_");
   const response=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/users",{method:"POST",headers:{origin:"https://admin.avidezuri.com",cookie:"avz_admin_session="+payload+"."+sig,"content-type":"application/json"},body:JSON.stringify({})}),env);
   assert.equal(response.status,403);
 });
