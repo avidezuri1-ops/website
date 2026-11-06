@@ -56,14 +56,6 @@ CONFIG.products = CONFIG.products.map(function(p, i){
   return p;
 });
 
-/* Shuffle the complete catalogue once on each fresh page load. */
-for(var shuffleIndex = CONFIG.products.length - 1; shuffleIndex > 0; shuffleIndex--){
-  var shuffleTarget = Math.floor(Math.random() * (shuffleIndex + 1));
-  var shuffleProduct = CONFIG.products[shuffleIndex];
-  CONFIG.products[shuffleIndex] = CONFIG.products[shuffleTarget];
-  CONFIG.products[shuffleTarget] = shuffleProduct;
-}
-
 var qty = CONFIG.products.map(function(){ return CONFIG.sizes.map(function(){ return 0; }); });
 var sel = CONFIG.products.map(function(){ return 0; });
 var cards = [];
@@ -169,6 +161,43 @@ function renderList(){
     list.appendChild(card);
     cards.push({ el: card, art: art, pills: pb, price: price, out: out, category: p.category });
     refresh(i);
+  });
+}
+
+
+function renderFeaturedSlider(){
+  var track = $("featured-track");
+  if(!track) return;
+  var featuredProducts = CONFIG.products.slice();
+  for(var i = featuredProducts.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = featuredProducts[i];
+    featuredProducts[i] = featuredProducts[j];
+    featuredProducts[j] = temp;
+  }
+  track.textContent = "";
+  featuredProducts.forEach(function(product, index){
+    var card = el("a", "featured-card");
+    card.href = "#shop";
+    var photo = el("div", "featured-photo");
+    var img = el("img");
+    img.src = "/images/" + slug(product.name) + ".png";
+    img.alt = product.name + " perfume bottle";
+    img.width = 800;
+    img.height = 800;
+    img.loading = "lazy";
+    img.onerror = function(){
+      if(!this.dataset.jpgFallback){
+        this.dataset.jpgFallback = "1";
+        this.src = "/images/" + slug(product.name) + ".jpg";
+      }
+    };
+    photo.appendChild(img);
+    card.appendChild(photo);
+    card.appendChild(el("span", "featured-number", String(index + 1).padStart(2, "0") + " / FEATURED"));
+    card.appendChild(el("strong", "", product.name));
+    card.appendChild(el("span", "featured-link", "Explore fragrance ↗"));
+    track.appendChild(card);
   });
 }
 
@@ -428,4 +457,5 @@ $("find").oninput = applyFilters;
 $("yr").textContent = new Date().getFullYear();
 renderZones();
 renderList();
+renderFeaturedSlider();
 renderSummary();
