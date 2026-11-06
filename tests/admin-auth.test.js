@@ -26,6 +26,23 @@ test("admin preflight permits the CSRF header required by authenticated mutation
   assert.match(response.headers.get("access-control-allow-headers")||"",/x-csrf-token/i);
 });
 
+test("admin branch preview origin is trusted only on the matching preview host",async()=>{
+  const previewRequest=new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{
+    method:"POST",
+    headers:{origin:"https://feature-multi-admin-auth.avidezuri.com","content-type":"application/json"},
+    body:JSON.stringify({email:"admin@example.com",password:"x"})
+  });
+  const response=await worker.fetch(previewRequest,{});
+  assert.equal(response.status,503);
+  const mismatchedHost=new Request("https://admin.avidezuri.com/api/admin/login",{
+    method:"POST",
+    headers:{origin:"https://feature-multi-admin-auth.avidezuri.com","content-type":"application/json"},
+    body:JSON.stringify({email:"admin@example.com",password:"x"})
+  });
+  const rejected=await worker.fetch(mismatchedHost,{});
+  assert.equal(rejected.status,403);
+});
+
 test("admin API rejects untrusted origins before reaching protected routes",async()=>{
   const response=await worker.fetch(request("/api/admin/orders",{origin:"https://attacker.example"}),{});
   assert.equal(response.status,403);
