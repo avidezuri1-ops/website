@@ -100,10 +100,6 @@ async function bootstrapSuperAdmin(env) {
     .bind(email,email.split("@")[0],encode64url(hash),encode64url(salt),iterations).run();
   return await env.DB.prepare("SELECT * FROM admin_users WHERE email=?").bind(email).first();
 }
-async function sessionKey(env) {
-  if (!env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length < 32) return null;
-  return crypto.subtle.importKey("raw", new TextEncoder().encode(env.ADMIN_SESSION_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
-}
 async function makeSession(admin, env) {
   const key=await sessionKey(env);
   if(!key) throw new Error("Admin session secret is not configured.");
