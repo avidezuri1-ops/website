@@ -178,6 +178,7 @@ function renderFeaturedSlider(){
   track.textContent = "";
   featuredProducts.forEach(function(product, index){
     var card = el("a", "featured-card");
+    card.style.setProperty("--motion-index", index);
     card.href = "#shop";
     var photo = el("div", "featured-photo");
     var img = el("img");
