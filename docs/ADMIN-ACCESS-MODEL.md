@@ -35,3 +35,13 @@ The first Super Admin is provisioned from the existing Worker secrets only when 
 Migration `0003_admin_accounts.sql` is additive and does not alter existing orders, products, pricing, delivery zones or order history. It must be applied only after the owner approves a production rollout and a verified D1 backup exists. The code and schema must be deployed together; do not deploy the new authentication code against a database where this migration has not been applied.
 
 No remote migration, secret change or production deployment is authorized by this document.
+
+\n## Isolated Cloudflare preview environment
+
+- The production/default Worker environment remains bound to `avidezuri-orders`.
+- The named Wrangler `preview` environment binds `DB` only to the separate `avidezuri-preview` database.
+- Deploy preview builds with `npm run deploy:preview`; keep production deployments on `npm run deploy`.
+- Configure the Cloudflare Workers Builds preview deployment command to use `npm run deploy:preview` and the production deployment command to use `npm run deploy`. Do not use the production command for branch previews.
+- The preview origin is explicitly allowlisted only in the preview environment. Production does not trust the preview hostname.
+- Apply the additive migrations to the preview database first and verify the preview DB binding before attempting any admin login. This repository change does not apply migrations or deploy either environment.
+- Before merge, verify the Cloudflare branch-preview workflow actually invokes the preview command and points at the preview Worker. If the Cloudflare dashboard is configured to run a different command, update that setting before testing.
