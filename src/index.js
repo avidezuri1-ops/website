@@ -5,7 +5,8 @@ function isTrustedAdminOrigin(origin, request) {
   try { parsed = new URL(origin); } catch { return false; }
   if (parsed.origin !== origin || parsed.origin !== new URL(request.url).origin) return false;
   return parsed.hostname === "admin.avidezuri.com" ||
-    /^(?:feature-multi-admin-auth|[a-f0-9]{8})\\.avidezuri\\.com$/i.test(parsed.hostname);
+    /^(?:(?:fix|feature)-[a-z0-9-]+|[a-f0-9]{8})\\.avidezuri\\.com$/i.test(parsed.hostname) ||
+    /^(?:(?:fix|feature)-[a-z0-9-]+|[a-f0-9]{8})-website\\.avidezuri1\\.workers\\.dev$/i.test(parsed.hostname);
 }
 function isAllowedOrigin(origin, request) {
   return ALLOWED_ORIGINS.has(origin) || isTrustedAdminOrigin(origin, request);
