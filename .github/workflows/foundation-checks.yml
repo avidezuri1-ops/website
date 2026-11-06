@@ -20,4 +20,4 @@ jobs:
         with:
           node-version: 22
       - name: Run Worker regression tests
-        run: node --test
+        run: node --check src/index.js && node --check public/admin/admin.js && node --test
