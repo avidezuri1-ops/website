@@ -455,7 +455,33 @@ Array.prototype.forEach.call(document.querySelectorAll(".category-btn"), functio
 $("find").oninput = applyFilters;
 
 $("yr").textContent = new Date().getFullYear();
+
+function initMotionEffects(){
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var cardsToAnimate = document.querySelectorAll(".card");
+  Array.prototype.forEach.call(cardsToAnimate, function(card, index){
+    card.classList.add("motion-card");
+    card.style.setProperty("--motion-delay", (index % 5) * 55 + "ms");
+  });
+  var sections = document.querySelectorAll(".steps, #shop, #order, .footer-service");
+  Array.prototype.forEach.call(sections, function(section){ section.classList.add("reveal"); });
+  if(reduced || !("IntersectionObserver" in window)){
+    document.querySelectorAll(".motion-card, .reveal").forEach(function(el){ el.classList.add("motion-visible", "is-visible"); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add(entry.target.classList.contains("motion-card") ? "motion-visible" : "is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
+  document.querySelectorAll(".motion-card, .reveal").forEach(function(el){ observer.observe(el); });
+}
+
 renderZones();
 renderList();
 renderFeaturedSlider();
 renderSummary();
+initMotionEffects();
