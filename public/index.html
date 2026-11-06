@@ -166,13 +166,6 @@
 <script>
 (function(){
   var track=document.getElementById("featured-track");
-  /* Shuffle featured fragrances on every fresh page load. */
-  if(track){
-    var cards=Array.prototype.slice.call(track.querySelectorAll(".featured-card"));
-    for(var i=cards.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var temp=cards[i];cards[i]=cards[j];cards[j]=temp;}
-    cards.forEach(function(card){track.appendChild(card);});
-    cards.forEach(function(card,index){var number=String(index+1).padStart(2,"0");var label=card.querySelector(".featured-number");if(label)label.textContent=number+" / FEATURED";});
-  }
   var progress=document.getElementById("featured-progress");
   var back=document.getElementById("back-to-top");
   var pageProgress=document.getElementById("scroll-progress-fill");
