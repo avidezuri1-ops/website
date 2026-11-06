@@ -1,4 +1,15 @@
 const ALLOWED_ORIGINS = new Set(["https://avidezuri.com", "https://www.avidezuri.com", "https://admin.avidezuri.com"]);
+function isTrustedAdminOrigin(origin, request) {
+  if (!origin) return false;
+  let parsed;
+  try { parsed = new URL(origin); } catch { return false; }
+  if (parsed.origin !== origin || parsed.origin !== new URL(request.url).origin) return false;
+  return parsed.hostname === "admin.avidezuri.com" ||
+    /^(?:feature-multi-admin-auth|[a-f0-9]{8})\\.avidezuri\\.com$/i.test(parsed.hostname);
+}
+function isAllowedOrigin(origin, request) {
+  return ALLOWED_ORIGINS.has(origin) || isTrustedAdminOrigin(origin, request);
+}
 const STATUSES = new Set(["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"]);
 const SIZES = new Set([30, 50, 100]);
 
@@ -29,8 +40,8 @@ function json(data, status = 200, headers = {}) {
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) responseHeaders.set(name, value);
   return new Response(JSON.stringify(data), { status, headers: responseHeaders });
 }
-function corsHeaders(origin) {
-  if (!origin || !ALLOWED_ORIGINS.has(origin)) return {};
+function corsHeaders(origin, request) {
+  if (!origin || !(ALLOWED_ORIGINS.has(origin) || isTrustedAdminOrigin(origin, request))) return {};
   return { "access-control-allow-origin": origin, "access-control-allow-methods": "GET,POST,PATCH,OPTIONS", "access-control-allow-headers": "content-type, x-csrf-token", "vary": "Origin" };
 }
 function fail(message, status = 400) { return json({ error: message }, status); }
@@ -129,7 +140,7 @@ async function verifySession(request,env) {
 }
 async function adminAuth(request,env,url) {
   if(url.pathname==="/api/admin/login" && request.method==="POST") {
-    if(request.headers.get("origin")!=="https://admin.avidezuri.com") return fail("Login must be submitted from the admin site.",403);
+    if(!isTrustedAdminOrigin(request.headers.get("origin"),request)) return fail("Login must be submitted from the admin site.",403);
     if(!env.DB || !env.ADMIN_SESSION_SECRET || env.ADMIN_SESSION_SECRET.length<32) return fail("Admin login is not configured yet.",503);
     let body; try{body=await request.json()}catch{return fail("Invalid login details.");}
     const email=safeText(body.email,254).toLowerCase(), password=typeof body.password==="string"?body.password:"";
@@ -159,7 +170,7 @@ async function adminAuth(request,env,url) {
     return json({ok:true,email:admin.email,display_name:admin.display_name,role:admin.role,permissions,must_change_password:admin.must_change_password===1,csrf:session.csrf},200,{"set-cookie":"avz_admin_session="+session.token+"; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=28800"});
   }
   if(url.pathname==="/api/admin/logout" && request.method==="POST") {
-    if(request.headers.get("origin")!=="https://admin.avidezuri.com") return fail("Logout must be submitted from the admin site.",403);
+    if(!isTrustedAdminOrigin(request.headers.get("origin"),request)) return fail("Logout must be submitted from the admin site.",403);
     const admin=await verifySession(request,env);
     if(admin && request.headers.get("x-csrf-token")!==admin.csrf) return fail("Security token expired. Refresh and try again.",403);
     return json({ok:true},200,{"set-cookie":"avz_admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
@@ -355,12 +366,12 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const origin = request.headers.get("origin");
-    const cors = corsHeaders(origin);
+    const cors = corsHeaders(origin, request);
     if (request.method === "OPTIONS") {
       if (!cors["access-control-allow-origin"]) return secureResponse(new Response(null, { status: 403 }));
       return secureResponse(new Response(null, { status: 204, headers: cors }));
     }
-    if (origin && !ALLOWED_ORIGINS.has(origin)) return fail("Origin not allowed.", 403);
+    if (origin && !isAllowedOrigin(origin, request)) return fail("Origin not allowed.", 403);
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
     if (url.pathname === "/api/orders" && request.method === "POST") {
       if (origin !== "https://avidezuri.com" && origin !== "https://www.avidezuri.com") {
@@ -375,7 +386,7 @@ export default {
       return response;
     }
     if (url.pathname.startsWith("/api/admin/")) {
-      if ((request.method === "POST" || request.method === "PATCH") && origin !== "https://admin.avidezuri.com") {
+      if ((request.method === "POST" || request.method === "PATCH") && !isTrustedAdminOrigin(origin, request)) {
         return fail("Admin requests must come from the admin site.", 403);
       }
       const authResponse = await adminAuth(request, env, url);
