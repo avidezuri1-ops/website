@@ -83,7 +83,8 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   assert.equal(response.status,403);
 });
 
-\ntest("preview origin is trusted only when explicitly configured for preview",async()=>{
+
+test("preview origin is trusted only when explicitly configured for preview",async()=>{
   const env={PREVIEW_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com",PREVIEW_ADMIN_ORIGIN:"https://feature-multi-admin-auth.avidezuri.com"};
   const preflight=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/login",{method:"OPTIONS",headers:{origin:env.PREVIEW_ORIGIN}}),env);
   assert.equal(preflight.status,204);
@@ -93,7 +94,8 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   assert.equal(production.status,403);
 });
 
-\ntest("unconfigured branch preview cannot read production admin data",async()=>{
+
+test("unconfigured branch preview cannot read production admin data",async()=>{
   const response=await worker.fetch(new Request("https://feature-multi-admin-auth.avidezuri.com/api/admin/orders"),{DB:{prepare(){throw new Error("production database must not be queried")}}});
   assert.equal(response.status,503);
   assert.match((await response.json()).error,/isolated database/i);
