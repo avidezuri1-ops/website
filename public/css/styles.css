@@ -262,3 +262,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){
  .card,.btn,.slider-arrow,.featured-photo img{transition:none!important}
 }
+
+/* Customer service contact: keep the number readable on the dark footer */
+.footer-whatsapp{color:#f3eee5}
+.footer-whatsapp small{color:#c9c1b5}
+.footer-whatsapp strong{color:#f3eee5}
+.footer-whatsapp:hover strong{color:#e2c990}
