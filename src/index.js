@@ -371,7 +371,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const hostname = url.hostname.toLowerCase();
-    if (url.pathname.startsWith("/api/") && !PRODUCTION_HOSTS.has(hostname) && !LOCAL_HOSTS.has(hostname) && env.APP_ENV !== "preview") {
+    if (request.method !== "OPTIONS" && url.pathname.startsWith("/api/") && !PRODUCTION_HOSTS.has(hostname) && !LOCAL_HOSTS.has(hostname) && env.APP_ENV !== "preview") {
       return fail("This preview is not configured with an isolated database.", 503);
     }
     const origin = request.headers.get("origin");
