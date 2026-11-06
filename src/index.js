@@ -15,6 +15,8 @@ function trustedAdminOrigins(env) {
 }
 const STATUSES = new Set(["Pending", "Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"]);
 const SIZES = new Set([30, 50, 100]);
+const PRODUCTION_HOSTS = new Set(["avidezuri.com", "www.avidezuri.com", "admin.avidezuri.com"]);
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
 const SECURITY_HEADERS = {
   "X-Content-Type-Options": "nosniff",
@@ -368,6 +370,10 @@ async function adminApi(request,env,url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const hostname = url.hostname.toLowerCase();
+    if (url.pathname.startsWith("/api/") && !PRODUCTION_HOSTS.has(hostname) && !LOCAL_HOSTS.has(hostname) && env.APP_ENV !== "preview") {
+      return fail("This preview is not configured with an isolated database.", 503);
+    }
     const origin = request.headers.get("origin");
     const cors = corsHeaders(origin, env);
     if (request.method === "OPTIONS") {
