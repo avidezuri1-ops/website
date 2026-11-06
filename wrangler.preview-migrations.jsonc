@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "d1_databases": [
+    {
+      "binding": "PREVIEW_DB",
+      "database_name": "avidezuri-preview",
+      "database_id": "09ad3f01-e071-46d2-ab12-1abf48609593",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
