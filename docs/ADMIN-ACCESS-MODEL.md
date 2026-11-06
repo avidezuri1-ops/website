@@ -38,11 +38,11 @@ No remote migration, secret change or production deployment is authorized by thi
 
 \n## Isolated Cloudflare preview environment
 
-- The production/default Worker environment remains bound to `avidezuri-orders`.
-- The named Wrangler `preview` environment binds `DB` only to the separate `avidezuri-preview` database.
-- Deploy preview builds with `npm run deploy:preview`; keep production deployments on `npm run deploy`.
-- Configure the Cloudflare Workers Builds preview deployment command to use `npm run deploy:preview` and the production deployment command to use `npm run deploy`. Do not use the production command for branch previews.
-- The preview origin is explicitly allowlisted only in the preview environment. Production does not trust the preview hostname.
-- API requests on non-production Avidezuri hostnames fail closed unless the Worker has the explicit `APP_ENV=preview` flag. This prevents a branch preview accidentally deployed with the default production binding from reading or changing production data.
-- Apply the additive migrations to the preview database first and verify the preview DB binding before attempting any admin login. This repository change does not apply migrations or deploy either environment.
-- Before merge, verify the Cloudflare branch-preview workflow actually invokes the preview command and points at the preview Worker. If the Cloudflare dashboard is configured to run a different command, update that setting before testing.
+- The production/default Worker remains bound to `avidezuri-orders`.
+- The top-level Wrangler `previews` block binds every branch Preview to the separate `avidezuri-preview` D1 database and sets `APP_ENV=preview`.
+- Cloudflare Workers Builds should use its Preview command (`npx wrangler preview`, the default for Worker Previews) for non-production branches and `npx wrangler deploy` only for the production branch. Do not use a production Version URL as a substitute for a Worker Preview.
+- Preview origins are trusted only when `APP_ENV=preview`, and only for HTTPS Avidezuri subdomains other than the production hosts. Production does not trust preview hostnames.
+- API requests on non-production hosts fail closed unless the Worker has the explicit `APP_ENV=preview` flag. This prevents a branch build accidentally using production settings from reading or changing production data.
+- Apply the additive migrations to the preview database before attempting admin login. This repository change does not apply migrations or deploy either environment.
+- Verify the preview binding in Cloudflare's Preview settings and confirm the deployment is a Worker Preview, not a Version URL, before testing.
+
