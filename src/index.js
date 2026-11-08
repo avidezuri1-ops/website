@@ -384,6 +384,13 @@ export default {
     if (origin && !isAllowedOrigin(origin, request)) return fail("Origin not allowed.", 403);
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
     if (url.pathname === "/api/track-order" && request.method === "GET") {
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      const ipDigest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip));
+      const ipHash = Array.from(new Uint8Array(ipDigest), byte => byte.toString(16).padStart(2, "0")).join("");
+      const rate = await env.DB.prepare(
+        "INSERT INTO order_tracking_attempts (ip_hash, window_started_at, attempts) VALUES (?, CAST(strftime('%s','now') AS INTEGER), 1) ON CONFLICT(ip_hash) DO UPDATE SET attempts = CASE WHEN CAST(strftime('%s','now') AS INTEGER) - window_started_at >= 900 THEN 1 ELSE attempts + 1 END, window_started_at = CASE WHEN CAST(strftime('%s','now') AS INTEGER) - window_started_at >= 900 THEN CAST(strftime('%s','now') AS INTEGER) ELSE window_started_at END RETURNING attempts"
+      ).bind(ipHash).first();
+      if (Number(rate?.attempts) > 20) return fail("Too many tracking attempts. Please try again in 15 minutes.", 429);
       const number = safeText(url.searchParams.get("number"), 20).toUpperCase();
       if (!/^ADZ\d{3,}$/.test(number)) return fail("Please enter a valid order number, such as ADZ001.");
       const order = await env.DB.prepare(
