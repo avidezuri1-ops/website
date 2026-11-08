@@ -33,7 +33,7 @@ function dbMock() {
           if (sql.includes("INSERT INTO orders")) return { id: 9, order_number: "ADZ001", total_pkr: 1650, created_at: "2026-11-06" };
           return null;
         },
-        async all() { return { results: [] }; },
+        async all() { return { results: sql.includes("FROM order_status_history") ? [{ new_status: "Pending", changed_at: "2026-11-09" }] : [] }; },
         async run() { return { success: true }; }
       };
     },
