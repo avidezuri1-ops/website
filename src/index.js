@@ -52,9 +52,14 @@ function safeText(value, max) {
 function slugify(value) {
   return String(value).toLowerCase().replace(/[\u2019']/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
-function orderNumber() {
-  const bytes = crypto.getRandomValues(new Uint8Array(5));
-  return "AVZ-" + Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+async function orderNumber(env) {
+  const row = await env.DB.prepare(
+    "UPDATE order_number_sequence SET next_value = next_value + 1 WHERE id = 1 RETURNING next_value - 1 AS sequence"
+  ).first();
+  if (!row || !Number.isSafeInteger(Number(row.sequence)) || Number(row.sequence) < 1) {
+    throw new Error("Order number sequence is not initialized.");
+  }
+  return "ADZ" + String(row.sequence).padStart(3, "0");
 }
 function b64url(input) {
   const s = input.replace(/-/g, "+").replace(/_/g, "/");
@@ -215,7 +220,11 @@ async function createOrder(request, env) {
   const subtotal = normalized.reduce((sum, item) => sum + item.line_total_pkr, 0);
   const total = subtotal + zone.fee_pkr;
   if (!Number.isSafeInteger(total) || total > 10000000) return fail("Order total is outside the allowed range.");
-  const number = orderNumber();
+  let number;
+  try { number = await orderNumber(env); } catch (error) {
+    console.error("Order number sequence unavailable.");
+    return fail("Orders are temporarily unavailable. Please try again shortly.", 503);
+  }
   let inserted = null;
   try {
     inserted = await env.DB.prepare(
@@ -374,6 +383,21 @@ export default {
     }
     if (origin && !isAllowedOrigin(origin, request)) return fail("Origin not allowed.", 403);
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
+    if (url.pathname === "/api/track-order" && request.method === "GET") {
+      const number = safeText(url.searchParams.get("number"), 20).toUpperCase();
+      if (!/^ADZ\\d{3,}$/.test(number)) return fail("Please enter a valid order number, such as ADZ001.");
+      const order = await env.DB.prepare(
+        "SELECT id, order_number, status, created_at, updated_at FROM orders WHERE order_number = ?"
+      ).bind(number).first();
+      if (!order) return fail("We could not find that order. Please check the order number.", 404);
+      const history = await env.DB.prepare(
+        "SELECT new_status, changed_at FROM order_status_history WHERE order_id = ? ORDER BY changed_at ASC, id ASC"
+      ).bind(order.id).all();
+      return json({
+        order: { order_number: order.order_number, status: order.status, created_at: order.created_at, updated_at: order.updated_at },
+        history: (history.results || []).map(entry => ({ status: entry.new_status, changed_at: entry.changed_at }))
+      }, 200, cors);
+    }
     if (url.pathname === "/api/orders" && request.method === "POST") {
       if (origin !== "https://avidezuri.com" && origin !== "https://www.avidezuri.com") {
         return fail("Orders must be submitted from the Avidezuri storefront.", 403);
@@ -394,6 +418,9 @@ export default {
       const response = authResponse || await adminApi(request, env, url);
       Object.entries(cors).forEach(([k,v]) => response.headers.set(k,v));
       return response;
+    }
+    if (url.pathname === "/track-order" && request.method === "GET" && env.ASSETS) {
+      return secureResponse(await env.ASSETS.fetch(new Request(new URL("/track-order.html", url), request)));
     }
     if (url.hostname.toLowerCase() === "admin.avidezuri.com" && url.pathname === "/" && request.method === "GET" && env.ASSETS) {
       return secureResponse(await env.ASSETS.fetch(new Request(new URL("/admin/index.html", url), request)));
