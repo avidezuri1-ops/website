@@ -46,7 +46,7 @@
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const number = input.value.trim().toUpperCase();
-    if (!/^ADZ\\d{3,}$/.test(number)) {
+    if (!/^ADZ\d{3,}$/.test(number)) {
       result.classList.add("hidden");
       showMessage("Enter a valid order number, for example ADZ001.", true);
       return;
