@@ -84,7 +84,7 @@ const ROLE_PERMISSIONS = {
 };
 const SUPER_ONLY = new Set(["admins.manage","settings.manage","audit.read"]);
 function randomToken(bytes=32) { return encode64url(crypto.getRandomValues(new Uint8Array(bytes))); }
-async function passwordHash(password, salt, iterations=310000) {
+async function passwordHash(password, salt, iterations=100000) {
   const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations,hash:"SHA-256"}, material, 256);
   return new Uint8Array(bits);
@@ -96,7 +96,7 @@ function constantEqual(a,b) {
 }
 async function verifyPassword(password,user) {
   try {
-    const actual=await passwordHash(password,b64url(user.password_salt),Number(user.password_iterations)||310000);
+    const actual=await passwordHash(password,b64url(user.password_salt),Number(user.password_iterations)||100000);
     return constantEqual(actual,b64url(user.password_hash));
   } catch { return false; }
 }
@@ -106,7 +106,7 @@ async function bootstrapSuperAdmin(env) {
   if (Number(count?.total)>0) return null;
   const email=String(env.ADMIN_EMAIL).trim().toLowerCase();
   const salt=crypto.getRandomValues(new Uint8Array(16));
-  const iterations=310000;
+  const iterations=100000;
   const hash=await passwordHash(env.ADMIN_PASSWORD,salt,iterations);
   await env.DB.prepare("INSERT OR IGNORE INTO admin_users (email,display_name,password_hash,password_salt,password_iterations,role,is_active,must_change_password) VALUES (?,?,?,?,?,'super_admin',1,0)")
     .bind(email,email.split("@")[0],encode64url(hash),encode64url(salt),iterations).run();
@@ -255,7 +255,7 @@ async function adminApi(request,env,url) {
     let body;try{body=await request.json()}catch{return fail("Invalid password request.");}
     const password=typeof body.password==="string"?body.password:"";
     if(password.length<12 || password.length>256) return fail("Password must be between 12 and 256 characters.");
-    const salt=crypto.getRandomValues(new Uint8Array(16)),iterations=310000,hash=await passwordHash(password,salt,iterations);
+    const salt=crypto.getRandomValues(new Uint8Array(16)),iterations=100000,hash=await passwordHash(password,salt,iterations);
     await env.DB.prepare("UPDATE admin_users SET password_hash=?,password_salt=?,password_iterations=?,must_change_password=0,session_version=session_version+1,updated_at=CURRENT_TIMESTAMP WHERE id=?")
       .bind(encode64url(hash),encode64url(salt),iterations,admin.id).run();
     await writeAudit(env,admin,admin.id,"admin.password_changed");
@@ -310,7 +310,7 @@ async function adminApi(request,env,url) {
     let body;try{body=await request.json()}catch{return fail("Invalid account details.");}
     const email=safeText(body.email,254).toLowerCase(),name=safeText(body.display_name,100),role=safeText(body.role,40);
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!name||!ROLE_PERMISSIONS[role]||role==="super_admin")return fail("Provide a valid email, name and non-super-admin role.");
-    const temporaryPassword=randomToken(18),salt=crypto.getRandomValues(new Uint8Array(16)),iterations=310000,hash=await passwordHash(temporaryPassword,salt,iterations);
+    const temporaryPassword=randomToken(18),salt=crypto.getRandomValues(new Uint8Array(16)),iterations=100000,hash=await passwordHash(temporaryPassword,salt,iterations);
     try {
       const result=await env.DB.prepare("INSERT INTO admin_users (email,display_name,password_hash,password_salt,password_iterations,role,is_active,must_change_password) VALUES (?,?,?,?,?,?,1,1) RETURNING id")
         .bind(email,name,encode64url(hash),encode64url(salt),iterations,role).first();
@@ -349,7 +349,7 @@ async function adminApi(request,env,url) {
     const id=Number(url.pathname.match(/\d+/)?.[0]);if(id===admin.id)return fail("Use your own password-change flow.",403);
     const target=await env.DB.prepare("SELECT id FROM admin_users WHERE id=?").bind(id).first();
     if(!target)return fail("Administrator not found.",404);
-    const temporaryPassword=randomToken(18),salt=crypto.getRandomValues(new Uint8Array(16)),iterations=310000,hash=await passwordHash(temporaryPassword,salt,iterations);
+    const temporaryPassword=randomToken(18),salt=crypto.getRandomValues(new Uint8Array(16)),iterations=100000,hash=await passwordHash(temporaryPassword,salt,iterations);
     const result=await env.DB.prepare("UPDATE admin_users SET password_hash=?,password_salt=?,password_iterations=?,must_change_password=1,session_version=session_version+1,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(encode64url(hash),encode64url(salt),iterations,id).run();
     if(!result.success)return fail("Could not reset administrator password.",500);
     await writeAudit(env,admin,id,"admin.password_reset");
