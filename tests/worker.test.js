@@ -25,12 +25,15 @@ function dbMock() {
         bind(...values) { args = values; return this; },
         async first() {
           calls.push({ sql, args });
+          if (sql.includes("UPDATE order_number_sequence")) return { sequence: 1 };
+          if (sql.includes("FROM orders WHERE order_number")) return { id: 9, order_number: "ADZ001", status: "Pending", created_at: "2026-11-09", updated_at: "2026-11-09" };
+          if (sql.includes("FROM order_status_history")) return { results: [{ new_status: "Pending", changed_at: "2026-11-09" }] };
           if (sql.includes("FROM products")) return { id: 1, name: "DE FLORA", active: 1, price_pkr: 1450 };
           if (sql.includes("FROM delivery_zones")) return { fee_pkr: 200 };
-          if (sql.includes("INSERT INTO orders")) return { id: 9, order_number: "AVZ-TEST", total_pkr: 1650, created_at: "2026-11-06" };
+          if (sql.includes("INSERT INTO orders")) return { id: 9, order_number: "ADZ001", total_pkr: 1650, created_at: "2026-11-06" };
           return null;
         },
-        async all() { return { results: [] }; },
+        async all() { return { results: sql.includes("FROM order_status_history") ? [{ new_status: "Pending", changed_at: "2026-11-09" }] : [] }; },
         async run() { return { success: true }; }
       };
     },
@@ -86,6 +89,8 @@ test("valid checkout uses D1 prices and delivery fee for its total", async () =>
   assert.equal(payload.order.subtotal_pkr, 1450);
   assert.equal(payload.order.delivery_fee_pkr, 200);
   assert.equal(payload.order.total_pkr, 1650);
+  assert.equal(payload.order.order_number, "ADZ001");
+  assert.ok(db.calls.some(call => call.sql?.includes("UPDATE order_number_sequence")));
   assert.equal(db.calls.at(-1).batch, 2);
 });
 
@@ -95,4 +100,18 @@ test("existing migration keeps core order and catalogue tables", async () => {
   for (const name of ["products", "product_prices", "delivery_zones", "orders", "order_items", "order_status_history"]) {
     assert.ok(sql.includes("CREATE TABLE IF NOT EXISTS " + name));
   }
+});
+
+test("public order tracking reveals status only and rejects malformed order numbers", async () => {
+  const db = dbMock();
+  const invalid = await worker.fetch(req("/api/track-order?number=not-an-order"), { DB: db });
+  assert.equal(invalid.status, 400);
+  const response = await worker.fetch(req("/api/track-order?number=adz001"), { DB: db });
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.order.order_number, "ADZ001");
+  assert.equal(payload.order.status, "Pending");
+  assert.equal(payload.order.customer_name, undefined);
+  assert.equal(payload.order.phone, undefined);
+  assert.deepEqual(payload.history.map(entry => entry.status), ["Pending"]);
 });

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="Track your Avidezuri perfume order using your order number.">
+  <title>Track Your Order | Avidezuri</title>
+  <style>
+    :root{color-scheme:dark;font-family:Inter,Arial,sans-serif;background:#090909;color:#f7f7f7}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#222 0,#090909 58%)}
+    main{width:min(100%,520px);border:1px solid #303030;border-radius:20px;padding:32px;background:#111;box-shadow:0 24px 80px #0008}
+    .brand{letter-spacing:.28em;font-size:13px;color:#c9a96e;text-align:center;font-weight:700}
+    h1{text-align:center;font-size:30px;margin:16px 0 8px}p{color:#aaa;line-height:1.6;text-align:center}
+    form{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}input{flex:1;min-width:180px;background:#080808;border:1px solid #444;border-radius:10px;padding:15px;color:#fff;font-size:16px;text-transform:uppercase}
+    button{border:0;border-radius:10px;background:#c9a96e;color:#111;font-weight:700;padding:0 20px;min-height:50px;cursor:pointer}
+    button:disabled{opacity:.6;cursor:wait}.message{min-height:24px;margin:16px 0 0;font-size:14px}
+    .result{margin-top:24px;border-top:1px solid #333;padding-top:22px}.order{display:flex;justify-content:space-between;gap:12px;align-items:center;font-weight:700}
+    .status{color:#c9a96e;text-transform:uppercase;letter-spacing:.08em;font-size:13px}
+    ol{list-style:none;padding:0;margin:22px 0 0}li{display:flex;gap:14px;align-items:flex-start;padding:0 0 20px;color:#777}
+    .dot{width:12px;height:12px;border:2px solid #555;border-radius:50%;margin-top:4px;flex:none}
+    li.done{color:#eee}li.done .dot{background:#c9a96e;border-color:#c9a96e}
+    li.cancelled{color:#e89b9b}li.cancelled .dot{border-color:#d66}
+    .hidden{display:none}.back{display:block;text-align:center;margin-top:24px;color:#c9a96e;text-decoration:none}
+    @media(max-width:440px){main{padding:24px 18px}form{display:grid}button{width:100%}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">AVIDEZURI</div>
+  <h1>Track your order</h1>
+  <p>Enter the order number from your confirmation message to see the latest status.</p>
+  <form id="tracking-form">
+    <input id="order-number" name="number" placeholder="e.g. ADZ001" autocomplete="off" maxlength="20" required aria-label="Order number">
+    <button id="track-button" type="submit">Track order</button>
+  </form>
+  <p id="message" class="message" role="status" aria-live="polite"></p>
+  <section id="result" class="result hidden" aria-live="polite">
+    <div class="order"><span id="result-number"></span><span id="result-status" class="status"></span></div>
+    <ol id="timeline"></ol>
+  </section>
+  <a class="back" href="/">Back to Avidezuri</a>
+</main>
+<script src="/js/track-order.js" defer></script>
+</body></html>
