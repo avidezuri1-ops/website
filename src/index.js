@@ -385,7 +385,7 @@ export default {
     if (url.pathname === "/api/health" && request.method === "GET") return json({ ok: true, service: "avidezuri-api" }, 200, cors);
     if (url.pathname === "/api/track-order" && request.method === "GET") {
       const number = safeText(url.searchParams.get("number"), 20).toUpperCase();
-      if (!/^ADZ\\d{3,}$/.test(number)) return fail("Please enter a valid order number, such as ADZ001.");
+      if (!/^ADZ\d{3,}$/.test(number)) return fail("Please enter a valid order number, such as ADZ001.");
       const order = await env.DB.prepare(
         "SELECT id, order_number, status, created_at, updated_at FROM orders WHERE order_number = ?"
       ).bind(number).first();
