@@ -45,10 +45,16 @@ function renderProducts(rows){
  rows.forEach(function(p){var tr=document.createElement("tr");var name=document.createElement("td");name.textContent=p.product_name+" · "+p.size_ml+"ml";var units=document.createElement("td");units.textContent=Number(p.units_sold||0).toLocaleString("en-PK");var revenue=document.createElement("td");revenue.textContent=money(p.revenue_pkr);tr.append(name,units,revenue);body.appendChild(tr)})
 }
 document.addEventListener("avz:session",function(event){
- var session=event.detail||{},permissions=session.permissions||[];
- allowed=!session.must_change_password&&permissions.indexOf("reports.read")!==-1;
- $("analyticsPanel").hidden=!allowed;
- if(allowed){if(!$("analyticsStart").value)defaults();load()}
+ var session=event.detail||{};
+ fetch("/api/admin/session",{credentials:"same-origin",cache:"no-store"}).then(function(response){
+  if(!response.ok)throw new Error("Session unavailable");
+  return response.json();
+ }).then(function(current){
+  var permissions=current.permissions||session.permissions||[];
+  allowed=!current.must_change_password&&permissions.indexOf("reports.read")!==-1;
+  $("analyticsPanel").hidden=!allowed;
+  if(allowed){if(!$("analyticsStart").value)defaults();load()}
+ }).catch(function(){$("analyticsPanel").hidden=true;allowed=false});
 });
 $("analyticsApply").addEventListener("click",load);
 $("analyticsRefresh").addEventListener("click",load);
