@@ -369,28 +369,36 @@ $("send-wa").onclick = async function(){
       throw new Error(result.error || "Could not save your order.");
     }
 
-    // Use prices and totals confirmed by the database.
-    var lines = ["New order – Avidezuri", "", "Items:"];
+    // Customer-facing WhatsApp order message. Totals come from the saved database order.
+    var lines = [
+      "✨ AVIDEZURI | ORDER REQUEST",
+      "",
+      "Hello Avidezuri! I’ve just placed an order through your website.",
+      "Please confirm my order. Thank you!",
+      "",
+      "━━━━━━━━━━━━━━━━━━",
+      "ORDER DETAILS",
+      "Order No: " + result.order.order_number,
+      "━━━━━━━━━━━━━━━━━━"
+    ];
 
     (result.items || []).forEach(function(item){
       lines.push(
-        "- " + item.quantity + " × " +
-        item.product_name + " (" + item.size_ml +
-        " ml) – " + money(item.line_total_pkr)
+        "• " + item.product_name + " — " + item.size_ml + " ml",
+        "  Quantity: " + item.quantity,
+        "  Amount: " + money(item.line_total_pkr)
       );
     });
 
     lines.push(
       "",
       "Subtotal: " + money(result.order.subtotal_pkr),
-      "Delivery (" + area + "): " +
-        money(result.order.delivery_fee_pkr),
-      "Total: " + money(result.order.total_pkr) +
-        " (cash on delivery)",
+      "Delivery (" + area + "): " + money(result.order.delivery_fee_pkr),
+      "TOTAL: " + money(result.order.total_pkr),
+      "Payment: Cash on Delivery",
       "",
-      "Order Number: " + result.order.order_number,
-      "Database Status: Saved successfully",
-      "",
+      "━━━━━━━━━━━━━━━━━━",
+      "DELIVERY DETAILS",
       "Name: " + $("f-name").value.trim(),
       "Phone: " + $("f-phone").value.trim(),
       "Area: " + area + ", Karachi",
@@ -398,7 +406,12 @@ $("send-wa").onclick = async function(){
     );
 
     var notes = $("f-notes").value.trim();
-    if(notes) lines.push("Notes: " + notes);
+    if(notes) lines.push("Order notes: " + notes);
+
+    lines.push(
+      "",
+      "Thank you for choosing AVIDEZURI. 🤍"
+    );
 
     $("msg").className = "msg";
     $("msg").textContent =
