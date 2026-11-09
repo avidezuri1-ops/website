@@ -64,3 +64,129 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 footer{color:var(--muted)}
 @media(max-width:760px){.welcome{padding-top:30px}.top{padding:0 18px}.wrap{width:calc(100% - 28px)}}
 @media(prefers-reduced-motion:reduce){.analytics-panel,.chart-fill,.btn{animation:none;transition:none}}
+
+
+/* Premium dashboard layout — visual-only layer */
+body{
+  background:
+    radial-gradient(ellipse at 88% 4%,rgba(220,200,155,.22),transparent 30rem),
+    linear-gradient(180deg,#f8f4ec 0%,var(--ivory) 48%,#f2ecdf 100%);
+  min-height:100vh;
+}
+.top{
+  position:sticky;top:0;z-index:20;height:76px;
+  padding-inline:max(28px,calc((100% - 1240px)/2));
+  background:rgba(251,248,242,.88);
+  box-shadow:0 5px 24px rgba(43,36,25,.045);
+}
+.brand{font-size:.96rem;letter-spacing:.24em}
+.topright{gap:26px}
+.topright a{transition:color .2s}
+.topright a:hover{color:var(--gold)}
+.wrap{width:min(1240px,calc(100% - 56px))}
+.welcome:not([hidden]){
+  position:relative;overflow:hidden;isolation:isolate;
+  min-height:190px;margin:30px 0 22px;padding:34px 38px;
+  align-items:center;border:1px solid rgba(169,133,71,.22);
+  background:linear-gradient(115deg,#29251f 0%,#393229 62%,#59472d 100%);
+  color:#fbf8f2;box-shadow:0 18px 42px rgba(45,36,23,.13);
+}
+.welcome:not([hidden]):after{
+  content:"";position:absolute;z-index:-1;right:-55px;top:-145px;
+  width:420px;height:420px;border:1px solid rgba(220,200,155,.25);
+  border-radius:50%;box-shadow:0 0 0 34px rgba(220,200,155,.045),0 0 0 72px rgba(220,200,155,.035);
+}
+.welcome .eyebrow{color:var(--gold-soft);font-size:.7rem;letter-spacing:.24em}
+.welcome h1{color:#fffaf1;font-size:clamp(2.1rem,4vw,3.25rem);letter-spacing:.015em}
+.welcome .muted{color:rgba(251,248,242,.72);font-size:.98rem;margin-top:8px}
+.welcome .btn{background:var(--gold-soft);border-color:var(--gold-soft);color:#27231d}
+.welcome .btn:hover{background:#f2dfb8;border-color:#f2dfb8}
+.notice{border-radius:3px;box-shadow:0 5px 18px rgba(43,36,25,.035)}
+.stats:not([hidden]){
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 24px;
+}
+.stats article{
+  position:relative;overflow:hidden;min-height:142px;padding:22px 23px;
+  border:1px solid rgba(169,133,71,.2);border-top:3px solid var(--gold);
+  border-radius:4px;background:rgba(251,248,242,.96);
+  box-shadow:0 9px 25px rgba(49,39,25,.055);
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+.stats article:hover{transform:translateY(-3px);box-shadow:0 15px 30px rgba(49,39,25,.09)}
+.stats article:after{
+  content:"";position:absolute;width:105px;height:105px;right:-34px;bottom:-48px;
+  border:1px solid rgba(169,133,71,.18);border-radius:50%;
+  box-shadow:0 0 0 13px rgba(169,133,71,.035);
+}
+.stats span{font-size:.78rem;letter-spacing:.105em;text-transform:uppercase}
+.stats strong{font-size:2.2rem;line-height:1.15;margin:13px 0 7px;color:#29251f}
+.stats small{font-size:.78rem}
+.panel:not([hidden]){
+  margin-bottom:23px;padding:26px 28px;border:1px solid rgba(169,133,71,.19);
+  border-radius:5px;background:rgba(251,248,242,.97);
+  box-shadow:0 10px 30px rgba(49,39,25,.055);
+}
+.panelhead{padding-bottom:15px;border-bottom:1px solid rgba(221,211,193,.72);margin-bottom:20px}
+.panelhead h2{font-size:1.42rem;letter-spacing:.015em;color:#302b24}
+.panelhead .muted{font-size:.86rem}
+.filters{gap:11px;align-items:center}
+.filters input,.filters select{min-height:44px;border-radius:3px;background:#fffdf9}
+.btn{min-height:42px;border-radius:2px;padding:10px 19px}
+.btn.secondary{background:#f4eee3;border-color:#dfd2bc}
+.btn.secondary:hover{background:#e9ddc8;border-color:#c6aa78;color:#28231c}
+.tablewrap{border:1px solid rgba(221,211,193,.8);border-radius:3px;background:#fffdf9}
+table{font-size:.86rem}
+thead{background:#f0e9dc}
+th{padding:14px 13px;color:#74664f;font-size:.7rem;letter-spacing:.12em}
+td{padding:14px 13px}
+tbody tr{transition:background .16s}
+tbody tr:hover{background:#f8f3e9}
+tbody tr:last-child td{border-bottom:0}
+.pill{padding:5px 10px;border-radius:2px;font:500 .72rem var(--sans);letter-spacing:.035em}
+.rowbtn{padding:5px 0;font-weight:600;text-decoration:none}
+.rowbtn:hover{text-decoration:underline}
+.footnote{margin-top:12px}
+.detail{padding:4px 0}
+.analytics-panel:not([hidden]){
+  border:1px solid rgba(169,133,71,.22);border-top:3px solid var(--gold);
+  border-radius:5px;background:linear-gradient(145deg,#fffdf9 0%,#f8f3e9 100%);
+  box-shadow:0 14px 34px rgba(49,39,25,.065);
+}
+.analytics-kpis article{border-radius:4px;box-shadow:0 7px 20px rgba(49,39,25,.045)}
+.analytics-card{border-radius:4px;box-shadow:0 7px 20px rgba(49,39,25,.035)}
+.analytics-card h3{font-size:1.04rem;letter-spacing:.01em}
+.analytics-filters{border-radius:4px}
+input:focus,select:focus{border-color:var(--gold);background:#fffdf9}
+.loginpanel{box-shadow:0 16px 38px rgba(49,39,25,.08)}
+footer{padding:28px 0 42px;letter-spacing:.035em}
+@media(max-width:850px){
+  .wrap{width:min(100% - 32px,720px)}
+  .top{padding-inline:18px}
+  .welcome:not([hidden]){padding:28px;min-height:170px}
+  .stats:not([hidden]){gap:11px}
+  .stats article{min-height:128px;padding:17px}
+  .panel:not([hidden]){padding:20px}
+}
+@media(max-width:560px){
+  .top{height:64px}.topright{gap:12px;font-size:.76rem}
+  .brand{font-size:.82rem;letter-spacing:.16em}
+  .wrap{width:calc(100% - 24px)}
+  .welcome:not([hidden]){margin:16px 0;padding:23px 20px;min-height:160px}
+  .welcome:not([hidden]):after{right:-190px}
+  .welcome .btn{margin-top:12px}
+  .stats:not([hidden]){grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .stats article{min-height:116px;padding:14px 13px}
+  .stats span{font-size:.68rem;letter-spacing:.07em}
+  .stats strong{font-size:1.7rem;margin:8px 0 5px}
+  .stats small{font-size:.7rem}
+  .panel:not([hidden]){padding:16px 13px;margin-bottom:15px}
+  .panelhead{gap:10px}
+  .filters{display:grid;grid-template-columns:1fr 1fr}
+  .filters input{grid-column:1/-1}
+  .filters .btn{width:100%}
+  .tablewrap{margin-inline:-2px}
+  th,td{padding:11px 9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .stats article,tbody tr,.topright a{transition:none}
+}
