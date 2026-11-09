@@ -274,7 +274,7 @@ async function adminApi(request,env,url) {
     if(!hasPermission(admin,"reports.read")) return fail("You do not have permission to view sales analytics.",403);
     const start=safeText(url.searchParams.get("start"),10),end=safeText(url.searchParams.get("end"),10);
     const period=safeText(url.searchParams.get("period"),10)||"day";
-    const validDate=value=>/^\\d{4}-\\d{2}-\\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value+"T00:00:00Z"));
+    const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value+"T00:00:00Z"));
     if(!validDate(start)||!validDate(end)||start>end) return fail("Choose a valid date range.");
     if(!["day","week","month"].includes(period)) return fail("Choose a valid chart interval.");
     const range="date(created_at) BETWEEN date(?) AND date(?)";
