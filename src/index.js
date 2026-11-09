@@ -270,6 +270,26 @@ async function adminApi(request,env,url) {
     await writeAudit(env,admin,admin.id,"admin.password_changed");
     return json({ok:true},200,{"set-cookie":"avz_admin_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"});
   }
+  if(request.method==="GET" && url.pathname==="/api/admin/analytics") {
+    if(!hasPermission(admin,"reports.read")) return fail("You do not have permission to view sales analytics.",403);
+    const start=safeText(url.searchParams.get("start"),10),end=safeText(url.searchParams.get("end"),10);
+    const period=safeText(url.searchParams.get("period"),10)||"day";
+    const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value+"T00:00:00Z"));
+    if(!validDate(start)||!validDate(end)||start>end) return fail("Choose a valid date range.");
+    if(!["day","week","month"].includes(period)) return fail("Choose a valid chart interval.");
+    const range="date(created_at) BETWEEN date(?) AND date(?)";
+    const totals=await env.DB.prepare(
+      "SELECT COUNT(*) AS total_orders, SUM(CASE WHEN status='Pending' THEN 1 ELSE 0 END) AS pending_orders, SUM(CASE WHEN status='Delivered' THEN 1 ELSE 0 END) AS delivered_orders, SUM(CASE WHEN status='Cancelled' THEN 1 ELSE 0 END) AS cancelled_orders, COALESCE(SUM(CASE WHEN status!='Cancelled' THEN total_pkr ELSE 0 END),0) AS revenue_pkr, COALESCE(SUM(CASE WHEN status='Delivered' THEN total_pkr ELSE 0 END),0) AS delivered_revenue_pkr FROM orders WHERE "+range
+    ).bind(start,end).first();
+    const dateFormat=period==="month"?"%Y-%m":period==="week"?"%Y-W%W":"%Y-%m-%d";
+    const trend=await env.DB.prepare(
+      "SELECT strftime(?,created_at) AS bucket, COUNT(*) AS orders, COALESCE(SUM(CASE WHEN status!='Cancelled' THEN total_pkr ELSE 0 END),0) AS revenue_pkr FROM orders WHERE "+range+" GROUP BY bucket ORDER BY bucket"
+    ).bind(dateFormat,start,end).all();
+    const products=await env.DB.prepare(
+      "SELECT oi.product_name, oi.size_ml, SUM(oi.quantity) AS units_sold, SUM(oi.line_total_pkr) AS revenue_pkr FROM order_items oi INNER JOIN orders o ON o.id=oi.order_id WHERE o.status!='Cancelled' AND "+range.replaceAll("created_at","o.created_at")+" GROUP BY oi.product_name,oi.size_ml ORDER BY units_sold DESC,revenue_pkr DESC LIMIT 8"
+    ).bind(start,end).all();
+    return json({start,end,period,totals:totals||{},trend:trend.results||[],top_products:products.results||[]});
+  }
   if(request.method==="GET" && url.pathname==="/api/admin/orders") {
     if(!hasPermission(admin,"orders.read")) return fail("You do not have permission to view orders.",403);
     const q=safeText(url.searchParams.get("q"),100),status=safeText(url.searchParams.get("status"),20);
