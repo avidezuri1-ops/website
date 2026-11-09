@@ -426,9 +426,6 @@ export default {
       Object.entries(cors).forEach(([k,v]) => response.headers.set(k,v));
       return response;
     }
-    if (url.pathname === "/track-order" && request.method === "GET" && env.ASSETS) {
-      return secureResponse(await env.ASSETS.fetch(new Request(new URL("/track-order.html", url), request)));
-    }
     if (url.hostname.toLowerCase() === "admin.avidezuri.com" && url.pathname === "/" && request.method === "GET" && env.ASSETS) {
       return secureResponse(await env.ASSETS.fetch(new Request(new URL("/admin/index.html", url), request)));
     }
