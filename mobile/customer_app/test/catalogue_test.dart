@@ -7,7 +7,7 @@ void main() {
     expect(fragrances[1].prices, [1750, 2550, 4500]);
   });
   test('exclusive collection contains twelve fragrances', () => expect(fragrances.where((p) => p.exclusive), hasLength(12)));
-  test('product image slug handles apostrophes', () => expect(Fragrance('DE ALEE’SHA', true).slug, 'de-alee-sha'));
+  test('product image slug handles apostrophes', () => expect(Fragrance('DE ALEE’SHA', true).slug, 'de-aleesha'));
   test('cart line calculates selected size and quantity total', () {
     final line = CartLine(fragrances.first, 2, 2);
     expect(line.unitPrice, 2250);
