@@ -1,0 +1,30 @@
+name: Customer Android app checks
+
+on:
+  pull_request:
+    paths:
+      - "mobile/customer_app/**"
+      - ".github/workflows/flutter-customer-app.yml"
+  push:
+    branches:
+      - "feature/customer-app-catalogue"
+    paths:
+      - "mobile/customer_app/**"
+      - ".github/workflows/flutter-customer-app.yml"
+
+jobs:
+  customer-app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/customer_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test
