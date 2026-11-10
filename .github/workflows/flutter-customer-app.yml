@@ -29,3 +29,14 @@ jobs:
         run: dart format lib test
       - run: flutter analyze
       - run: flutter test
+      - name: Generate Android platform project
+        run: flutter create --platforms=android --org=com.avidezuri --project-name=customer .
+      - name: Build debug APK
+        run: flutter build apk --debug
+      - name: Upload customer APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: avidezuri-customer-android-debug
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
