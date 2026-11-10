@@ -76,18 +76,35 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
     final cat = category == 'All' || (category == 'Exclusive' && p.exclusive) || (category == 'Budget Friendly' && !p.exclusive);
     return cat && p.name.toLowerCase().contains(query.trim().toLowerCase());
   }).toList();
-  void details(Fragrance p) => showModalBottomSheet<void>(context: context, backgroundColor: paper, showDragHandle: true,
-    builder: (_) => Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Center(child: SizedBox(height: 160, child: Image.network(p.imageUrl, fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => const Icon(Icons.spa_outlined, size: 96, color: gold)))),
-      Text(p.name, style: const TextStyle(fontSize: 24, color: ink)),
-      Text(p.exclusive ? 'EXCLUSIVE COLLECTION' : 'BUDGET FRIENDLY', style: const TextStyle(color: gold, fontSize: 11, letterSpacing: 1.2)),
-      const SizedBox(height: 12),
-      ...List.generate(3, (i) => Padding(padding: const EdgeInsets.symmetric(vertical: 7), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(sizes[i].toString() + ' ml'), Text(money(p.prices[i]), style: const TextStyle(fontWeight: FontWeight.w600)),
-      ]))),
-      const Text('Shopping bag and checkout are coming in the next app stage.', style: TextStyle(color: muted, fontSize: 12)),
-    ])));
+  void details(Fragrance p) {
+    var selectedSize = 0;
+    showModalBottomSheet<void>(context: context, backgroundColor: paper, showDragHandle: true,
+      builder: (_) => StatefulBuilder(builder: (sheetContext, refresh) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: SizedBox(height: 150, child: Image.network(p.imageUrl, fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => const Icon(Icons.spa_outlined, size: 90, color: gold)))),
+          Text(p.name, style: const TextStyle(fontSize: 24, color: ink)),
+          Text(p.exclusive ? 'EXCLUSIVE COLLECTION' : 'BUDGET FRIENDLY',
+            style: const TextStyle(color: gold, fontSize: 11, letterSpacing: 1.2)),
+          const SizedBox(height: 14),
+          Wrap(spacing: 8, runSpacing: 6, children: List.generate(3, (i) => ChoiceChip(
+            label: Text('${sizes[i]} ml · ${money(p.prices[i])}'),
+            selected: selectedSize == i,
+            onSelected: (_) => refresh(() => selectedSize = i),
+            selectedColor: const Color(0xFFE7D9BE),
+            side: BorderSide.none,
+          ))),
+          const SizedBox(height: 16),
+          SizedBox(width: double.infinity, child: FilledButton.icon(
+            style: FilledButton.styleFrom(backgroundColor: ink, foregroundColor: Colors.white, padding: const EdgeInsets.all(14)),
+            onPressed: () => addToCart(p, selectedSize),
+            icon: const Icon(Icons.shopping_bag_outlined),
+            label: const Text('ADD TO BAG'),
+          )),
+        ]),
+      )));
+  }
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('AVIDEZURI', style: TextStyle(letterSpacing: 4, fontSize: 18)), centerTitle: true,
       actions: [Padding(padding: const EdgeInsets.only(right: 8), child: IconButton(
