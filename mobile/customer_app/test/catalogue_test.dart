@@ -13,4 +13,10 @@ void main() {
     expect(line.unitPrice, 2250);
     expect(line.total, 4500);
   });
+  test('delivery selector includes all 36 configured Karachi areas', () {
+    expect(deliveryZones, hasLength(36));
+    expect(deliveryZones.first.fee, 200);
+    expect(deliveryZones.firstWhere((z) => z.area == 'Korangi').fee, 300);
+    expect(deliveryZones.firstWhere((z) => z.area == 'Bahria Town Karachi').fee, 400);
+  });
 }
