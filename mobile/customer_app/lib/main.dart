@@ -89,7 +89,7 @@ class ProductTile extends StatelessWidget {
         const SizedBox(height: 10),
         Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: ink, fontSize: 13, fontWeight: FontWeight.w600)),
         const SizedBox(height: 5),
-        const Text('30 ml · from Rs 1,450', style: TextStyle(color: muted, fontSize: 10)),
+        const Text('30 ml · 50 ml · 100 ml', style: TextStyle(color: muted, fontSize: 10)),
         const SizedBox(height: 8),
         const Row(children: [
           Text('VIEW FRAGRANCE', style: TextStyle(color: gold, fontSize: 9, letterSpacing: .8, fontWeight: FontWeight.bold)),
