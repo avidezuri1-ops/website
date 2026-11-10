@@ -17,6 +17,34 @@ const fragrances = <Fragrance>[
   Fragrance('DE WOMEN', true), Fragrance('DE LEATHER', false), Fragrance('DE FANTASY', true), Fragrance('DE MOUNTAIN', true),
   Fragrance('DE BLACK', true), Fragrance('DE NOIR', true),
 ];
+class CartLine {
+  CartLine(this.fragrance, this.sizeIndex, [this.quantity = 1]);
+  final Fragrance fragrance;
+  final int sizeIndex;
+  int quantity;
+  int get unitPrice => fragrance.prices[sizeIndex];
+  int get total => unitPrice * quantity;
+}
+class DeliveryZone {
+  const DeliveryZone(this.area, this.fee);
+  final String area;
+  final int fee;
+}
+const deliveryZones = <DeliveryZone>[
+  DeliveryZone('Saddar', 200), DeliveryZone('Clifton', 200), DeliveryZone('DHA (Defence)', 200),
+  DeliveryZone('PECHS', 200), DeliveryZone('Tariq Road', 200), DeliveryZone('Gulshan-e-Iqbal', 200),
+  DeliveryZone('Gulistan-e-Jauhar', 200), DeliveryZone('North Nazimabad', 200), DeliveryZone('Nazimabad', 200),
+  DeliveryZone('Federal B Area', 200), DeliveryZone('Garden', 200), DeliveryZone('Bahadurabad', 200),
+  DeliveryZone('Korangi', 300), DeliveryZone('Landhi', 300), DeliveryZone('Malir', 300),
+  DeliveryZone('Shah Faisal Colony', 300), DeliveryZone('Scheme 33', 300), DeliveryZone('Gulshan-e-Maymar', 300),
+  DeliveryZone('North Karachi', 300), DeliveryZone('New Karachi', 300), DeliveryZone('Orangi Town', 300),
+  DeliveryZone('SITE', 300), DeliveryZone('Liaquatabad', 300), DeliveryZone('Lyari', 300),
+  DeliveryZone('Baldia', 300), DeliveryZone('Keamari', 300),
+  DeliveryZone('Bin Qasim', 400), DeliveryZone('Steel Town', 400), DeliveryZone('Gadap', 400),
+  DeliveryZone('Surjani Town', 400), DeliveryZone('Hawksbay', 400), DeliveryZone('Manghopir', 400),
+  DeliveryZone('Bahria Town Karachi', 400), DeliveryZone('DHA City', 400), DeliveryZone('Gulshan-e-Hadeed', 400),
+  DeliveryZone('Other area in Karachi', 400),
+];
 String money(int n) => 'Rs ' + n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 class AvidezuriCustomerApp extends StatelessWidget {
   const AvidezuriCustomerApp({super.key});
@@ -30,25 +58,96 @@ class CustomerHomePage extends StatefulWidget {
 }
 class _CustomerHomePageState extends State<CustomerHomePage> {
   String category = 'All', query = '';
+  final List<CartLine> cart = [];
+  String? selectedArea;
+  int get deliveryFee => deliveryZones.firstWhere((z) => z.area == selectedArea, orElse: () => const DeliveryZone('', 0)).fee;
+  int get cartCount => cart.fold(0, (sum, line) => sum + line.quantity);
+  int get cartTotal => cart.fold(0, (sum, line) => sum + line.total);
+  void addToCart(Fragrance p, int sizeIndex) {
+    final index = cart.indexWhere((line) => line.fragrance.name == p.name && line.sizeIndex == sizeIndex);
+    setState(() { if (index >= 0) { cart[index].quantity++; } else { cart.add(CartLine(p, sizeIndex)); } });
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${p.name} added to your bag')));
+  }
+  void openBag() => showModalBottomSheet<void>(context: context, isScrollControlled: true, backgroundColor: paper, showDragHandle: true,
+    builder: (_) => StatefulBuilder(builder: (context, refresh) => Padding(
+      padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewInsets.bottom + 24),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Your shopping bag', style: TextStyle(fontSize: 23, color: ink)),
+        const SizedBox(height: 12),
+        if (cart.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Center(child: Text('Your bag is empty. Explore the collection to add a fragrance.')))
+        else ...[
+          ...cart.map((line) => ListTile(contentPadding: EdgeInsets.zero,
+            title: Text(line.fragrance.name, style: const TextStyle(color: ink)),
+            subtitle: Text('${sizes[line.sizeIndex]} ml · ${money(line.unitPrice)}'),
+            leading: const Icon(Icons.spa_outlined, color: gold),
+            trailing: SizedBox(width: 116, child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              IconButton(onPressed: () => refresh(() { if (line.quantity > 1) { line.quantity--; } else { cart.remove(line); } }), icon: const Icon(Icons.remove_circle_outline, size: 19)),
+              Text('${line.quantity}'),
+              IconButton(onPressed: () => refresh(() => line.quantity++), icon: const Icon(Icons.add_circle_outline, size: 19)),
+            ])))),
+          const Divider(),
+          const Text('Delivery area', style: TextStyle(fontWeight: FontWeight.w600, color: ink)),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            value: selectedArea,
+            isExpanded: true,
+            decoration: const InputDecoration(hintText: 'Select your Karachi area', filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
+            items: deliveryZones.map((zone) => DropdownMenuItem(value: zone.area, child: Text('${zone.area} · ${money(zone.fee)} delivery'))).toList(),
+            onChanged: (value) => refresh(() => selectedArea = value),
+          ),
+          const SizedBox(height: 12),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Subtotal'), Text(money(cartTotal))]),
+          const SizedBox(height: 6),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Delivery'), Text(selectedArea == null ? 'Select area' : money(deliveryFee))]),
+          const Divider(),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text('Estimated total', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(money(cartTotal + (selectedArea == null ? 0 : deliveryFee)), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          ]),
+          const SizedBox(height: 8),
+          const Text('Cash on Delivery checkout will be enabled after the secure mobile ordering connection is ready.', style: TextStyle(color: muted, fontSize: 12)),
+        ],
+        const SizedBox(height: 10),
+      ]),
+    )));
   List<Fragrance> get visible => fragrances.where((p) {
     final cat = category == 'All' || (category == 'Exclusive' && p.exclusive) || (category == 'Budget Friendly' && !p.exclusive);
     return cat && p.name.toLowerCase().contains(query.trim().toLowerCase());
   }).toList();
-  void details(Fragrance p) => showModalBottomSheet<void>(context: context, backgroundColor: paper, showDragHandle: true,
-    builder: (_) => Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Center(child: SizedBox(height: 160, child: Image.network(p.imageUrl, fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => const Icon(Icons.spa_outlined, size: 96, color: gold)))),
-      Text(p.name, style: const TextStyle(fontSize: 24, color: ink)),
-      Text(p.exclusive ? 'EXCLUSIVE COLLECTION' : 'BUDGET FRIENDLY', style: const TextStyle(color: gold, fontSize: 11, letterSpacing: 1.2)),
-      const SizedBox(height: 12),
-      ...List.generate(3, (i) => Padding(padding: const EdgeInsets.symmetric(vertical: 7), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(sizes[i].toString() + ' ml'), Text(money(p.prices[i]), style: const TextStyle(fontWeight: FontWeight.w600)),
-      ]))),
-      const Text('Shopping bag and checkout are coming in the next app stage.', style: TextStyle(color: muted, fontSize: 12)),
-    ])));
+  void details(Fragrance p) {
+    var selectedSize = 0;
+    showModalBottomSheet<void>(context: context, backgroundColor: paper, showDragHandle: true,
+      builder: (_) => StatefulBuilder(builder: (sheetContext, refresh) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: SizedBox(height: 150, child: Image.network(p.imageUrl, fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => const Icon(Icons.spa_outlined, size: 90, color: gold)))),
+          Text(p.name, style: const TextStyle(fontSize: 24, color: ink)),
+          Text(p.exclusive ? 'EXCLUSIVE COLLECTION' : 'BUDGET FRIENDLY',
+            style: const TextStyle(color: gold, fontSize: 11, letterSpacing: 1.2)),
+          const SizedBox(height: 14),
+          Wrap(spacing: 8, runSpacing: 6, children: List.generate(3, (i) => ChoiceChip(
+            label: Text('${sizes[i]} ml · ${money(p.prices[i])}'),
+            selected: selectedSize == i,
+            onSelected: (_) => refresh(() => selectedSize = i),
+            selectedColor: const Color(0xFFE7D9BE),
+            side: BorderSide.none,
+          ))),
+          const SizedBox(height: 16),
+          SizedBox(width: double.infinity, child: FilledButton.icon(
+            style: FilledButton.styleFrom(backgroundColor: ink, foregroundColor: Colors.white, padding: const EdgeInsets.all(14)),
+            onPressed: () => addToCart(p, selectedSize),
+            icon: const Icon(Icons.shopping_bag_outlined),
+            label: const Text('ADD TO BAG'),
+          )),
+        ]),
+      )));
+  }
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('AVIDEZURI', style: TextStyle(letterSpacing: 4, fontSize: 18)), centerTitle: true,
-      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_bag_outlined))]),
+      actions: [Padding(padding: const EdgeInsets.only(right: 8), child: IconButton(
+        onPressed: openBag, icon: Badge(label: Text('$cartCount'), isLabelVisible: cartCount > 0, child: const Icon(Icons.shopping_bag_outlined))))]),
     body: CustomScrollView(slivers: [
       SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(20), child: Container(padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(color: const Color(0xFFECE3D3), borderRadius: BorderRadius.circular(22)),
