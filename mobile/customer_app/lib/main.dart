@@ -25,6 +25,26 @@ class CartLine {
   int get unitPrice => fragrance.prices[sizeIndex];
   int get total => unitPrice * quantity;
 }
+class DeliveryZone {
+  const DeliveryZone(this.area, this.fee);
+  final String area;
+  final int fee;
+}
+const deliveryZones = <DeliveryZone>[
+  DeliveryZone('Saddar', 200), DeliveryZone('Clifton', 200), DeliveryZone('DHA (Defence)', 200),
+  DeliveryZone('PECHS', 200), DeliveryZone('Tariq Road', 200), DeliveryZone('Gulshan-e-Iqbal', 200),
+  DeliveryZone('Gulistan-e-Jauhar', 200), DeliveryZone('North Nazimabad', 200), DeliveryZone('Nazimabad', 200),
+  DeliveryZone('Federal B Area', 200), DeliveryZone('Garden', 200), DeliveryZone('Bahadurabad', 200),
+  DeliveryZone('Korangi', 300), DeliveryZone('Landhi', 300), DeliveryZone('Malir', 300),
+  DeliveryZone('Shah Faisal Colony', 300), DeliveryZone('Scheme 33', 300), DeliveryZone('Gulshan-e-Maymar', 300),
+  DeliveryZone('North Karachi', 300), DeliveryZone('New Karachi', 300), DeliveryZone('Orangi Town', 300),
+  DeliveryZone('SITE', 300), DeliveryZone('Liaquatabad', 300), DeliveryZone('Lyari', 300),
+  DeliveryZone('Baldia', 300), DeliveryZone('Keamari', 300),
+  DeliveryZone('Bin Qasim', 400), DeliveryZone('Steel Town', 400), DeliveryZone('Gadap', 400),
+  DeliveryZone('Surjani Town', 400), DeliveryZone('Hawksbay', 400), DeliveryZone('Manghopir', 400),
+  DeliveryZone('Bahria Town Karachi', 400), DeliveryZone('DHA City', 400), DeliveryZone('Gulshan-e-Hadeed', 400),
+  DeliveryZone('Other area in Karachi', 400),
+];
 String money(int n) => 'Rs ' + n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 class AvidezuriCustomerApp extends StatelessWidget {
   const AvidezuriCustomerApp({super.key});
@@ -39,6 +59,8 @@ class CustomerHomePage extends StatefulWidget {
 class _CustomerHomePageState extends State<CustomerHomePage> {
   String category = 'All', query = '';
   final List<CartLine> cart = [];
+  String? selectedArea;
+  int get deliveryFee => deliveryZones.firstWhere((z) => z.area == selectedArea, orElse: () => const DeliveryZone('', 0)).fee;
   int get cartCount => cart.fold(0, (sum, line) => sum + line.quantity);
   int get cartTotal => cart.fold(0, (sum, line) => sum + line.total);
   void addToCart(Fragrance p, int sizeIndex) {
@@ -65,9 +87,26 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
               IconButton(onPressed: () => refresh(() => line.quantity++), icon: const Icon(Icons.add_circle_outline, size: 19)),
             ])))),
           const Divider(),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Subtotal'), Text(money(cartTotal), style: const TextStyle(fontWeight: FontWeight.bold))]),
+          const Text('Delivery area', style: TextStyle(fontWeight: FontWeight.w600, color: ink)),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            value: selectedArea,
+            isExpanded: true,
+            decoration: const InputDecoration(hintText: 'Select your Karachi area', filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
+            items: deliveryZones.map((zone) => DropdownMenuItem(value: zone.area, child: Text('${zone.area} · ${money(zone.fee)} delivery'))).toList(),
+            onChanged: (value) => refresh(() => selectedArea = value),
+          ),
+          const SizedBox(height: 12),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Subtotal'), Text(money(cartTotal))]),
+          const SizedBox(height: 6),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Delivery'), Text(selectedArea == null ? 'Select area' : money(deliveryFee))]),
+          const Divider(),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text('Estimated total', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(money(cartTotal + (selectedArea == null ? 0 : deliveryFee)), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          ]),
           const SizedBox(height: 8),
-          const Text('Delivery fee is calculated after selecting your Karachi area. Checkout will be enabled after secure mobile ordering is ready.', style: TextStyle(color: muted, fontSize: 12)),
+          const Text('Cash on Delivery checkout will be enabled after the secure mobile ordering connection is ready.', style: TextStyle(color: muted, fontSize: 12)),
         ],
         const SizedBox(height: 10),
       ]),
