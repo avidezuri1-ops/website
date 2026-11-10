@@ -90,7 +90,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
           const Text('Delivery area', style: TextStyle(fontWeight: FontWeight.w600, color: ink)),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: selectedArea,
+            initialValue: selectedArea,
             isExpanded: true,
             decoration: const InputDecoration(hintText: 'Select your Karachi area', filled: true, fillColor: Colors.white, border: OutlineInputBorder()),
             items: deliveryZones.map((zone) => DropdownMenuItem(value: zone.area, child: Text('${zone.area} · ${money(zone.fee)} delivery'))).toList(),
