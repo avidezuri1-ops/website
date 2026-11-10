@@ -17,6 +17,14 @@ const fragrances = <Fragrance>[
   Fragrance('DE WOMEN', true), Fragrance('DE LEATHER', false), Fragrance('DE FANTASY', true), Fragrance('DE MOUNTAIN', true),
   Fragrance('DE BLACK', true), Fragrance('DE NOIR', true),
 ];
+class CartLine {
+  CartLine(this.fragrance, this.sizeIndex, [this.quantity = 1]);
+  final Fragrance fragrance;
+  final int sizeIndex;
+  int quantity;
+  int get unitPrice => fragrance.prices[sizeIndex];
+  int get total => unitPrice * quantity;
+}
 String money(int n) => 'Rs ' + n.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 class AvidezuriCustomerApp extends StatelessWidget {
   const AvidezuriCustomerApp({super.key});
@@ -30,6 +38,40 @@ class CustomerHomePage extends StatefulWidget {
 }
 class _CustomerHomePageState extends State<CustomerHomePage> {
   String category = 'All', query = '';
+  final List<CartLine> cart = [];
+  int get cartCount => cart.fold(0, (sum, line) => sum + line.quantity);
+  int get cartTotal => cart.fold(0, (sum, line) => sum + line.total);
+  void addToCart(Fragrance p, int sizeIndex) {
+    final index = cart.indexWhere((line) => line.fragrance.name == p.name && line.sizeIndex == sizeIndex);
+    setState(() { if (index >= 0) { cart[index].quantity++; } else { cart.add(CartLine(p, sizeIndex)); } });
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${p.name} added to your bag')));
+  }
+  void openBag() => showModalBottomSheet<void>(context: context, isScrollControlled: true, backgroundColor: paper, showDragHandle: true,
+    builder: (_) => StatefulBuilder(builder: (context, refresh) => Padding(
+      padding: EdgeInsets.fromLTRB(20, 8, 20, MediaQuery.of(context).viewInsets.bottom + 24),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('Your shopping bag', style: TextStyle(fontSize: 23, color: ink)),
+        const SizedBox(height: 12),
+        if (cart.isEmpty) const Padding(padding: EdgeInsets.all(24), child: Center(child: Text('Your bag is empty. Explore the collection to add a fragrance.')))
+        else ...[
+          ...cart.map((line) => ListTile(contentPadding: EdgeInsets.zero,
+            title: Text(line.fragrance.name, style: const TextStyle(color: ink)),
+            subtitle: Text('${sizes[line.sizeIndex]} ml · ${money(line.unitPrice)}'),
+            leading: const Icon(Icons.spa_outlined, color: gold),
+            trailing: SizedBox(width: 116, child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              IconButton(onPressed: () => refresh(() { if (line.quantity > 1) { line.quantity--; } else { cart.remove(line); } }), icon: const Icon(Icons.remove_circle_outline, size: 19)),
+              Text('${line.quantity}'),
+              IconButton(onPressed: () => refresh(() => line.quantity++), icon: const Icon(Icons.add_circle_outline, size: 19)),
+            ])))),
+          const Divider(),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Subtotal'), Text(money(cartTotal), style: const TextStyle(fontWeight: FontWeight.bold))]),
+          const SizedBox(height: 8),
+          const Text('Delivery fee is calculated after selecting your Karachi area. Checkout will be enabled after secure mobile ordering is ready.', style: TextStyle(color: muted, fontSize: 12)),
+        ],
+        const SizedBox(height: 10),
+      ]),
+    )));
   List<Fragrance> get visible => fragrances.where((p) {
     final cat = category == 'All' || (category == 'Exclusive' && p.exclusive) || (category == 'Budget Friendly' && !p.exclusive);
     return cat && p.name.toLowerCase().contains(query.trim().toLowerCase());
@@ -48,7 +90,8 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
     ])));
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('AVIDEZURI', style: TextStyle(letterSpacing: 4, fontSize: 18)), centerTitle: true,
-      actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_bag_outlined))]),
+      actions: [Padding(padding: const EdgeInsets.only(right: 8), child: IconButton(
+        onPressed: openBag, icon: Badge(label: Text('$cartCount'), isLabelVisible: cartCount > 0, child: const Icon(Icons.shopping_bag_outlined))))]),
     body: CustomScrollView(slivers: [
       SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(20), child: Container(padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(color: const Color(0xFFECE3D3), borderRadius: BorderRadius.circular(22)),
