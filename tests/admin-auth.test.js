@@ -107,3 +107,23 @@ test("authenticated state changes reject missing CSRF tokens",async()=>{
   const response=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/users",{method:"POST",headers:{origin:"https://admin.avidezuri.com",cookie:"avz_admin_session="+payload+"."+sig,"content-type":"application/json"},body:JSON.stringify({})}),env);
   assert.equal(response.status,403);
 });
+
+
+test("configured Worker Preview accepts preflight only from its exact preview origin",async()=>{
+  const origin="https://fix-preview-d1-isolation-rebuilt.avidezuri.com";
+  const response=await worker.fetch(new Request(origin+"/api/admin/login",{
+    method:"OPTIONS",
+    headers:{origin}
+  }),{APP_ENV:"preview"});
+  assert.equal(response.status,204);
+  assert.equal(response.headers.get("access-control-allow-origin"),origin);
+});
+
+test("production admin host rejects a preview origin even when preview variables are present",async()=>{
+  const response=await worker.fetch(new Request("https://admin.avidezuri.com/api/admin/login",{
+    method:"POST",
+    headers:{origin:"https://fix-preview-d1-isolation-rebuilt.avidezuri.com","content-type":"application/json"},
+    body:JSON.stringify({email:"preview@example.com",password:"test"})
+  }),{APP_ENV:"preview"});
+  assert.equal(response.status,403);
+});
