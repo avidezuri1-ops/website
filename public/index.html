@@ -69,39 +69,6 @@
   </ol>
 </section>
 
-<section class="featured wrap reveal" aria-labelledby="featured-title">
-  <div class="featured-heading">
-    <div>
-      <p class="eyebrow">THE AVIDEZURI EDIT</p>
-      <h2 id="featured-title">Find your signature scent.</h2>
-      <p class="hint">Explore all fragrances in a fresh random order on every visit.</p>
-    </div>
-    <div class="slider-controls" aria-label="Featured fragrances controls">
-      <button type="button" class="slider-arrow" id="featured-prev" aria-label="Previous fragrances">←</button>
-      <button type="button" class="slider-arrow" id="featured-next" aria-label="Next fragrances">→</button>
-    </div>
-  </div>
-  <div class="featured-track" id="featured-track" tabindex="0" aria-label="Featured fragrances">
-    <a class="featured-card" href="#shop">
-      <div class="featured-photo"><img src="/images/de-wanted.png" alt="De Wanted perfume bottle" loading="lazy" width="800" height="800"></div>
-      <span class="featured-number">01 / FEATURED</span><strong>DE WANTED</strong><span class="featured-link">Explore fragrance ↗</span>
-    </a>
-    <a class="featured-card" href="#shop">
-      <div class="featured-photo"><img src="/images/de-flora.png" alt="De Flora perfume bottle" loading="lazy" width="800" height="800"></div>
-      <span class="featured-number">02 / FEATURED</span><strong>DE FLORA</strong><span class="featured-link">Explore fragrance ↗</span>
-    </a>
-    <a class="featured-card" href="#shop">
-      <div class="featured-photo"><img src="/images/de-swim.png" alt="De Swim perfume bottle" loading="lazy" width="800" height="800"></div>
-      <span class="featured-number">03 / FEATURED</span><strong>DE SWIM</strong><span class="featured-link">Explore fragrance ↗</span>
-    </a>
-    <a class="featured-card" href="#shop">
-      <div class="featured-photo"><img src="/images/de-bomb.png" alt="De Bomb perfume bottle" loading="lazy" width="800" height="800"></div>
-      <span class="featured-number">04 / FEATURED</span><strong>DE BOMB</strong><span class="featured-link">Explore fragrance ↗</span>
-    </a>
-  </div>
-  <div class="slider-progress" aria-hidden="true"><span id="featured-progress"></span></div>
-</section>
-
 <main>
   <section id="shop" class="block wrap" aria-labelledby="shop-h">
     <div class="section-head">
@@ -185,18 +152,14 @@
 <button type="button" class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
 <script>
 (function(){
-  var track=document.getElementById("featured-track");
-  var progress=document.getElementById("featured-progress");
   var back=document.getElementById("back-to-top");
   var pageProgress=document.getElementById("scroll-progress-fill");
   function update(){
-    if(track&&progress){var max=track.scrollWidth-track.clientWidth;progress.style.width=(max>0?track.scrollLeft/max*100:100)+"%";}
-    var doc=document.documentElement;var maxScroll=doc.scrollHeight-doc.clientHeight;
+    var doc=document.documentElement;
+    var maxScroll=doc.scrollHeight-doc.clientHeight;
     if(pageProgress)pageProgress.style.width=(maxScroll>0?doc.scrollTop/maxScroll*100:0)+"%";
     if(back)back.classList.toggle("visible",doc.scrollTop>500);
   }
-  if(track){["featured-prev","featured-next"].forEach(function(id){var b=document.getElementById(id);if(b)b.addEventListener("click",function(){var direction=id==="featured-next"?1:-1;var card=track.querySelector(".featured-card");var gap=parseFloat(window.getComputedStyle(track).columnGap)||20;var step=card?card.getBoundingClientRect().width+gap:Math.max(260,track.clientWidth*.72);var max=Math.max(0,track.scrollWidth-track.clientWidth);var target=Math.max(0,Math.min(max,track.scrollLeft+direction*step));track.scrollTo({left:target,behavior:"smooth"});});});}
-  if(track)track.addEventListener("scroll",update,{passive:true});
   window.addEventListener("scroll",update,{passive:true});
   if(back)back.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
   if("IntersectionObserver" in window&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
