@@ -127,6 +127,7 @@ function renderList(){
   list.textContent = "";
   CONFIG.products.forEach(function(p, i){
     var card = el("div", "card");
+    card.id = "product-" + slug(p.name);
     card.style.setProperty("--card-index", i);
     card.dataset.s = p.name.toLowerCase();
     card.dataset.category = p.category;
@@ -430,6 +431,28 @@ Array.prototype.forEach.call(document.querySelectorAll(".category-btn"), functio
 });
 
 $("find").oninput = applyFilters;
+
+/* Campaign banners navigate to their matching product card. */
+Array.prototype.forEach.call(document.querySelectorAll(".campaign-banner"), function(link){
+  link.addEventListener("click", function(event){
+    var targetId = link.getAttribute("href");
+    if(!targetId || targetId.charAt(0) !== "#") return;
+    var target = $(targetId.slice(1));
+    if(!target) return;
+    event.preventDefault();
+    activeCategory = "all";
+    $("find").value = "";
+    Array.prototype.forEach.call(document.querySelectorAll(".category-btn"), function(b){
+      b.setAttribute("aria-pressed", b.dataset.category === "all" ? "true" : "false");
+    });
+    applyFilters();
+    history.replaceState(null, "", targetId);
+    target.scrollIntoView({behavior:"smooth", block:"center"});
+    target.classList.add("product-highlight");
+    window.setTimeout(function(){ target.classList.remove("product-highlight"); }, 1800);
+  });
+});
+
 
 $("yr").textContent = new Date().getFullYear();
 
