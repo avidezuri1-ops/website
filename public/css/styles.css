@@ -368,3 +368,39 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
   .campaign-copy strong{font-size:clamp(1.55rem,6.5vw,1.9rem)}
   .campaign-banner img{width:46%;height:94%;right:0;bottom:0}
 }
+
+
+/* ===== Shop catalogue: larger, clearer perfume presentation ===== */
+#shop .grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:38px 22px;
+}
+#shop .card{padding:14px}
+#shop .art{aspect-ratio:4/5}
+#shop .art.photo img{
+  object-fit:contain;
+  transform:scale(1.13);
+  transform-origin:center;
+}
+#shop .card:hover .art.photo img{transform:scale(1.18)}
+#shop .cname{
+  font-size:1.12rem;
+  line-height:1.3;
+  letter-spacing:.1em;
+  min-height:2.6em;
+  display:flex;
+  align-items:center;
+}
+@media(max-width:900px){
+  #shop .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 16px}
+  #shop .art.photo img{transform:scale(1.1)}
+  #shop .cname{font-size:1rem}
+}
+@media(max-width:620px){
+  #shop .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
+  #shop .card{padding:9px}
+  #shop .art{aspect-ratio:4/5}
+  #shop .art.photo img{transform:scale(1.08)}
+  #shop .card:hover .art.photo img{transform:scale(1.1)}
+  #shop .cname{font-size:.88rem;letter-spacing:.06em;min-height:2.5em}
+}
