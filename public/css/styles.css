@@ -472,12 +472,20 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
 }
 #shop .card{scroll-margin-top:110px}
 
-/* Compact storefront header: reduce excess vertical whitespace */
-.topbar-inner{min-height:56px}
-.brandmark{width:148px}
-.top-actions{gap:18px}
+/* Compact storefront header: remove excess vertical whitespace */
+.topbar-inner{min-height:42px}
+.brandmark{width:136px;max-height:38px}
+.topbar:after{padding:4px 10px;font-size:.58rem;line-height:1.2;letter-spacing:.13em}
+.top-actions{gap:14px}
 @media(max-width:820px){
-  .topbar-inner{min-height:50px;gap:12px}
-  .brandmark{width:126px}
-  .top-actions{gap:12px}
+  .topbar-inner{min-height:40px;gap:10px}
+  .brandmark{width:120px;max-height:34px}
+  .top-actions{gap:9px}
+  .top-note{padding:4px 7px;font-size:.55rem}
+}
+@media(max-width:480px){
+  .topbar:after{padding:3px 5px;font-size:.5rem;line-height:1.15;letter-spacing:.09em}
+  .topbar-inner{min-height:38px}
+  .brandmark{width:112px;max-height:32px}
+  .top-note{max-width:86px;padding:4px 6px}
 }
