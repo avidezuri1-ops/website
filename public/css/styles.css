@@ -368,3 +368,17 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
   .campaign-copy strong{font-size:clamp(1.55rem,6.5vw,1.9rem)}
   .campaign-banner img{width:46%;height:94%;right:0;bottom:0}
 }
+
+
+/* ===== Product catalogue: larger bottle presentation and clearer names ===== */
+.grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:38px 26px}
+.art{aspect-ratio:1/1}
+.art.photo img{object-fit:contain;padding:3%}
+.cname{font-size:1.12rem;font-weight:600;letter-spacing:.09em;line-height:1.35}
+@media(max-width:560px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 14px}
+  .cname{font-size:1rem;letter-spacing:.06em}
+}
+@media(max-width:360px){
+  .grid{grid-template-columns:1fr}
+}
