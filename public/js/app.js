@@ -127,6 +127,7 @@ function renderList(){
   list.textContent = "";
   CONFIG.products.forEach(function(p, i){
     var card = el("div", "card");
+    card.id = "product-" + slug(p.name);
     card.style.setProperty("--card-index", i);
     card.dataset.s = p.name.toLowerCase();
     card.dataset.category = p.category;
@@ -164,43 +165,6 @@ function renderList(){
   });
 }
 
-
-function renderFeaturedSlider(){
-  var track = $("featured-track");
-  if(!track) return;
-  var featuredProducts = CONFIG.products.slice();
-  for(var i = featuredProducts.length - 1; i > 0; i--){
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = featuredProducts[i];
-    featuredProducts[i] = featuredProducts[j];
-    featuredProducts[j] = temp;
-  }
-  track.textContent = "";
-  featuredProducts.forEach(function(product, index){
-    var card = el("a", "featured-card");
-    card.style.setProperty("--motion-index", index);
-    card.href = "#shop";
-    var photo = el("div", "featured-photo");
-    var img = el("img");
-    img.src = "/images/" + slug(product.name) + ".png";
-    img.alt = product.name + " perfume bottle";
-    img.width = 800;
-    img.height = 800;
-    img.loading = "lazy";
-    img.onerror = function(){
-      if(!this.dataset.jpgFallback){
-        this.dataset.jpgFallback = "1";
-        this.src = "/images/" + slug(product.name) + ".jpg";
-      }
-    };
-    photo.appendChild(img);
-    card.appendChild(photo);
-    card.appendChild(el("span", "featured-number", String(index + 1).padStart(2, "0") + " / FEATURED"));
-    card.appendChild(el("strong", "", product.name));
-    card.appendChild(el("span", "featured-link", "Explore fragrance ↗"));
-    track.appendChild(card);
-  });
-}
 
 function refresh(i){
   var c = cards[i], j = sel[i];
@@ -468,6 +432,28 @@ Array.prototype.forEach.call(document.querySelectorAll(".category-btn"), functio
 
 $("find").oninput = applyFilters;
 
+/* Campaign banners navigate to their matching product card. */
+Array.prototype.forEach.call(document.querySelectorAll(".campaign-banner"), function(link){
+  link.addEventListener("click", function(event){
+    var targetId = link.getAttribute("href");
+    if(!targetId || targetId.charAt(0) !== "#") return;
+    var target = $(targetId.slice(1));
+    if(!target) return;
+    event.preventDefault();
+    activeCategory = "all";
+    $("find").value = "";
+    Array.prototype.forEach.call(document.querySelectorAll(".category-btn"), function(b){
+      b.setAttribute("aria-pressed", b.dataset.category === "all" ? "true" : "false");
+    });
+    applyFilters();
+    history.replaceState(null, "", targetId);
+    target.scrollIntoView({behavior:"smooth", block:"center"});
+    target.classList.add("product-highlight");
+    window.setTimeout(function(){ target.classList.remove("product-highlight"); }, 1800);
+  });
+});
+
+
 $("yr").textContent = new Date().getFullYear();
 
 function initMotionEffects(){
@@ -496,6 +482,5 @@ function initMotionEffects(){
 
 renderZones();
 renderList();
-renderFeaturedSlider();
 renderSummary();
 initMotionEffects();
