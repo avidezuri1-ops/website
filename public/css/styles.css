@@ -344,3 +344,27 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
   .campaign-copy strong{font-size:clamp(1.65rem,7vw,2rem)}
   .campaign-banner img{right:1%;bottom:2%;width:38%;height:82%}
 }
+
+
+/* ===== Brand visibility and campaign bottle label readability ===== */
+.topbar-inner{min-height:88px}
+.brandmark{width:240px;max-width:52vw;max-height:none;height:auto}
+.campaign-banner{min-height:360px}
+.campaign-copy{max-width:47%;padding-right:0}
+.campaign-copy strong{font-size:clamp(1.55rem,2.8vw,2.35rem)}
+.campaign-banner img{right:0;bottom:0;width:48%;height:100%;object-position:center bottom}
+@media(max-width:820px){
+  .topbar-inner{min-height:80px}
+  .brandmark{width:210px;max-width:48vw}
+  .campaign-banner{min-height:310px}
+  .campaign-copy{max-width:48%}
+  .campaign-banner img{width:47%;height:96%}
+}
+@media(max-width:560px){
+  .topbar-inner{min-height:72px}
+  .brandmark{width:176px;max-width:48vw}
+  .campaign-banner{min-height:290px}
+  .campaign-copy{max-width:49%;gap:10px}
+  .campaign-copy strong{font-size:clamp(1.55rem,6.5vw,1.9rem)}
+  .campaign-banner img{width:46%;height:94%;right:0;bottom:0}
+}
