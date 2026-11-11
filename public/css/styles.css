@@ -404,3 +404,70 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
   #shop .card:hover .art.photo img{transform:scale(1.1)}
   #shop .cname{font-size:.88rem;letter-spacing:.06em;min-height:2.5em}
 }
+
+
+/* Make product size selectors and quantity controls unmistakably visible. */
+#shop .pills{gap:8px;margin:12px 0 8px}
+#shop .pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:48px;
+  min-height:36px;
+  padding:7px 12px;
+  border:1px solid var(--gold);
+  background:var(--ivory);
+  color:var(--ink);
+  opacity:1;
+  visibility:visible;
+}
+#shop .pill[aria-pressed="true"]{
+  background:var(--ink);
+  color:var(--paper);
+  border-color:var(--ink);
+}
+#shop .stepper{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  margin:4px auto 0;
+  border:1px solid var(--gold)!important;
+  background:var(--paper);
+  opacity:1!important;
+  visibility:visible!important;
+}
+#shop .stepper button{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:40px;
+  min-width:42px;
+  border:0;
+  background:var(--ivory)!important;
+  color:var(--ink)!important;
+  font-size:1.45rem;
+  font-weight:600;
+  line-height:1;
+  opacity:1!important;
+  visibility:visible!important;
+  cursor:pointer;
+}
+#shop .stepper output{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  min-height:40px;
+  color:var(--ink)!important;
+  font-size:1rem;
+  font-weight:600;
+  opacity:1;
+}
+#shop .card.product-highlight{
+  outline:3px solid var(--gold);
+  outline-offset:5px;
+  box-shadow:0 0 0 7px rgba(169,133,71,.13);
+}
+#shop .card{scroll-margin-top:110px}
