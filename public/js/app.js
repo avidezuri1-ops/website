@@ -101,7 +101,7 @@ function tryPhoto(art, p){
     // This image is preloaded before insertion; lazy loading on a detached Image can prevent the request from starting.
     img.loading = "eager";
     img.decoding = "async";
-    img.onload = function(){ art.textContent = ""; art.appendChild(img); art.classList.add("photo"); };
+    img.onload = function(){ var badge=art.querySelector(".new-product-badge"); art.textContent = ""; art.appendChild(img); if(badge) art.appendChild(badge); art.classList.add("photo"); };
     img.onerror = function(){ k++; next(); };
     img.src = exts[k] ? base + "." + exts[k] : base;
   })();
@@ -143,7 +143,7 @@ function renderNewArrivals(){
     photo.alt=p.name+" perfume bottle";
     photo.loading="lazy";
     photo.onerror=function(){photo.remove();};
-    photo.onload=function(){art.insertBefore(photo,badge);};
+    photo.onload=function(){var placeholder=art.querySelector("svg");if(placeholder)placeholder.remove();art.insertBefore(photo,badge);};
     photo.src="images/"+slug(p.name)+".png";
     link.appendChild(art);
     var copy=el("div","new-arrival-copy");
