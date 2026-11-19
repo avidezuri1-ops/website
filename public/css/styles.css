@@ -509,3 +509,6 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
 @media(max-width:820px){.new-arrivals{padding:42px 0 18px}.new-arrival-card{flex-basis:65%}}
 @media(max-width:560px){.new-arrivals-heading{align-items:flex-start}.new-arrivals-heading h2{font-size:1.8rem}.new-arrivals-heading .hint{font-size:.92rem}.new-arrival-card{flex-basis:82%}.new-arrival-copy span{font-size:.7rem}}
 @media(prefers-reduced-motion:reduce){.new-arrival-card,.new-arrivals-track{scroll-behavior:auto;transition:none}}
+
+/* Keep product image panels clean and square; no arched overlay/frame. */
+#shop .art{border-radius:0!important}
