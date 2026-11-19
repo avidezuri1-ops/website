@@ -1,0 +1,91 @@
+/* AvideZuri Emerald & Brushed Gold visual theme.
+   Additive overrides only: product data, images, checkout and application logic are untouched. */
+:root {
+  --ivory:#EDE4D0; --paper:#F9F7F0; --stone:#DCD2BC;
+  --ink:#18352D; --muted:#68776E; --line:#D4C7A9;
+  --gold:#C6A15B; --gold-soft:#DCC58F; --night:#123B32;
+}
+html,body{background:var(--ivory);color:var(--ink)}
+::selection{background:var(--gold-soft);color:#123B32}
+.topbar{background:rgba(18,59,50,.98);border-bottom:1px solid rgba(198,161,91,.55);box-shadow:0 8px 28px rgba(10,35,29,.18)}
+.topbar:after{background:#0D3028;color:#EDE4D0}
+.brandmark{filter:brightness(0) invert(1);opacity:.98}
+.top-actions a{color:#F9F7F0}
+.top-actions a:hover{color:#DCC58F}
+.top-note{color:#E6D2A5;border-color:#C6A15B}
+.hero{background:#123B32}
+.hero:after{background:linear-gradient(90deg,rgba(8,38,31,.34),rgba(8,38,31,.02) 70%),linear-gradient(0deg,#123B32 0%,transparent 38%)}
+.hero-img{filter:saturate(.88) contrast(1.02)}
+.hero-card{background:linear-gradient(145deg,rgba(18,59,50,.98),rgba(12,43,36,.98));border:1px solid rgba(198,161,91,.75);box-shadow:0 24px 70px rgba(12,43,36,.22);color:#F9F7F0}
+.hero-card p{color:#E2E7DD}
+.btn{background:var(--gold);border-color:var(--gold);color:#18352D}
+.btn:hover{background:#D9B875;border-color:#D9B875;color:#123B32}
+.btn.ghost{background:transparent;border-color:#DCC58F;color:#F9F7F0}
+.facts{border-color:rgba(220,197,143,.35);color:#D7DED5}
+.facts b{color:#F1E6CB}
+.steps li{border-color:var(--gold)}
+.steps li:before,.eyebrow,.footer-kicker{color:#A98543}
+.steps b{color:var(--ink)}
+h2{color:#18352D}
+.featured-card{color:#18352D}
+.featured-number{color:#98743A}
+.featured-photo{background:linear-gradient(145deg,#F9F7F0,#E5DCC8);border-color:#D4C7A9}
+.slider-arrow{background:#F9F7F0;border-color:#C6A15B;color:#123B32}
+.slider-arrow:hover{background:#123B32;border-color:#123B32;color:#F9F7F0}
+.slider-progress span{background:#C6A15B}
+.category-btn{background:#F9F7F0;border-color:#C6A15B;color:#18352D}
+.category-btn:hover{border-color:#123B32;color:#123B32}
+.category-btn[aria-pressed=true]{background:#123B32;border-color:#123B32;color:#F9F7F0}
+#find,input,textarea,select{background:#F9F7F0;color:#18352D;border-color:#CFC2A4}
+input::placeholder,textarea::placeholder{color:#899187}
+input:focus,textarea:focus,select:focus{border-color:#C6A15B;outline:1px solid rgba(198,161,91,.25)}
+.card{background:#F9F7F0;border:1px solid #D4C7A9;box-shadow:0 8px 24px rgba(18,59,50,.045)}
+.card:hover{border-color:#C6A15B;box-shadow:0 18px 36px rgba(18,59,50,.12)}
+.art{background:radial-gradient(circle at 50% 35%,#E4D8BD,#D8CEB8 72%)}
+.art.photo{background:#F9F7F0}
+.cname{color:#18352D}
+.pill{background:#F2EBDD;border-color:#C6A15B;color:#18352D}
+.pill[aria-pressed=true]{background:#123B32;border-color:#123B32;color:#F9F7F0}
+.pill i{background:#C6A15B;color:#18352D}
+.cprice{color:#8A6B32;font-weight:600}
+.stepper{border-color:#C6A15B;background:#F9F7F0}
+.stepper button{color:#123B32}
+.stepper button:hover{background:#EDE4D0;color:#8A6B32}
+.stepper output{color:#18352D}
+.order-panel{background:#F9F7F0;border:1px solid #D4C7A9;box-shadow:0 12px 32px rgba(18,59,50,.06)}
+.order-panel h3{color:#123B32}
+#summary li{border-color:#DED3BC;color:#18352D}
+#summary .ship{color:#8A6B32}
+.total{color:#123B32;border-top:1px solid #D4C7A9}
+label{color:#24483D}
+.msg.err{color:#A23C2D}
+.campaign-banner{--campaign-bg:#DDE7DB;--campaign-ink:#173C31;border-color:rgba(18,59,50,.16)}
+.campaign-flora{--campaign-bg:#E5E0CF;--campaign-ink:#24483D}
+.campaign-wanted{--campaign-bg:#E7D8B9;--campaign-ink:#493A20}
+.campaign-movement{--campaign-bg:#D5E1D3;--campaign-ink:#1C493A}
+.campaign-noir{--campaign-bg:#D7DCD4;--campaign-ink:#243B33}
+.campaign-night{--campaign-bg:#E6D9C3;--campaign-ink:#4B3B26}
+.campaign-swim{--campaign-bg:#D7E5E0;--campaign-ink:#214B48}
+.campaign-fantasy{--campaign-bg:#EEE5D1;--campaign-ink:#5C4B2B}
+.campaign-creventus{--campaign-bg:#D8DED0;--campaign-ink:#354638}
+.campaign-ocean{--campaign-bg:#D8E5E0;--campaign-ink:#24443D}
+.campaign-banner:before{background:radial-gradient(ellipse at 78% 48%,rgba(255,255,255,.72),transparent 52%),linear-gradient(110deg,rgba(255,255,255,.2),transparent 65%)}
+footer{background:#123B32;border-top:1px solid #C6A15B;color:#EDE4D0}
+footer .footer-service h2{color:#F9F7F0}
+footer .footer-service-copy>p:not(.footer-kicker){color:#D4DED5}
+.footer-service{border-color:rgba(220,197,143,.3)}
+.footer-kicker{color:#DCC58F}
+.footer-whatsapp{background:#0E3028;border-color:#C6A15B;color:#F9F7F0}
+.footer-whatsapp small{color:#D4DED5}
+.footer-whatsapp strong{color:#F9F7F0}
+.footer-wa-icon svg{color:#DCC58F}
+.footer-social-links a{border-color:rgba(220,197,143,.4);color:#F9F7F0}
+.footer-social-links a:hover{background:#C6A15B;border-color:#C6A15B;color:#123B32}
+.footer-brand{color:#F1E6CB}
+.footer-note{color:#D4DED5}
+#bar{background:#123B32;border:1px solid #C6A15B;color:#F9F7F0}
+#bar .btn{background:#C6A15B;border-color:#C6A15B;color:#123B32}
+.back-to-top{background:#123B32;border-color:#C6A15B;color:#F1E6CB}
+.back-to-top:hover{background:#C6A15B;color:#123B32}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #C6A15B;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.campaign-banner,.campaign-banner img{transition:none!important}}
