@@ -303,16 +303,50 @@ async function adminApi(request,env,url) {
     const result=await env.DB.prepare(sql).bind(...values).all();
     return json({orders:result.results||[]});
   }
+  if(request.method==="GET" && url.pathname==="/api/admin/catalog") {
+    if(!hasPermission(admin,"orders.update"))return fail("You do not have permission to edit orders.",403);
+    const result=await env.DB.prepare("SELECT p.slug,p.name,pp.size_ml,pp.price_pkr FROM products p JOIN product_prices pp ON pp.product_id=p.id WHERE p.active=1 ORDER BY p.sort_order,p.name,pp.size_ml").all();
+    const map=new Map();
+    for(const row of result.results||[]) { if(!map.has(row.slug))map.set(row.slug,{slug:row.slug,name:row.name,prices:{}}); map.get(row.slug).prices[row.size_ml]=row.price_pkr; }
+    return json({products:[...map.values()]});
+  }
   const detailMatch=url.pathname.match(/^\/api\/admin\/orders\/(\d+)$/);
   if(request.method==="GET" && detailMatch) {
     if(!hasPermission(admin,"orders.read")) return fail("You do not have permission to view orders.",403);
     const id=Number(detailMatch[1]),order=await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
     if(!order)return fail("Order not found.",404);
     const [items,history]=await Promise.all([
-      env.DB.prepare("SELECT product_name,size_ml,unit_price_pkr,quantity,line_total_pkr FROM order_items WHERE order_id=? ORDER BY id").bind(id).all(),
+      env.DB.prepare("SELECT oi.product_name,p.slug AS product_slug,oi.size_ml,oi.unit_price_pkr,oi.quantity,oi.line_total_pkr FROM order_items oi JOIN products p ON p.id=oi.product_id WHERE oi.order_id=? ORDER BY oi.id").bind(id).all(),
       env.DB.prepare("SELECT old_status,new_status,changed_at,changed_by FROM order_status_history WHERE order_id=? ORDER BY changed_at DESC,id DESC").bind(id).all()
     ]);
     return json({order,items:items.results||[],history:history.results||[]});
+  }
+  const itemsMatch=url.pathname.match(/^\/api\/admin\/orders\/(\d+)\/items$/);
+  if(request.method==="PATCH" && itemsMatch) {
+    if(!hasPermission(admin,"orders.update"))return fail("You do not have permission to edit orders.",403);
+    const id=Number(itemsMatch[1]),order=await env.DB.prepare("SELECT id,status,city,area FROM orders WHERE id=?").bind(id).first();
+    if(!order)return fail("Order not found.",404);
+    if(["Shipped","Delivered","Cancelled"].includes(order.status))return fail("Items cannot be edited after an order is shipped, delivered or cancelled.",409);
+    let body;try{body=await request.json()}catch{return fail("Invalid JSON body.");}
+    if(!Array.isArray(body.items)||body.items.length<1||body.items.length>30)return fail("Keep between 1 and 30 order articles.");
+    const normalized=[];
+    for(const item of body.items) {
+      const slug=safeText(item.slug,100),size=Number(item.size_ml),quantity=Number(item.quantity);
+      if(!slug||!SIZES.has(size)||!Number.isInteger(quantity)||quantity<1||quantity>20)return fail("One or more order articles have invalid details.");
+      const product=await env.DB.prepare("SELECT p.id,p.name,p.active,pp.price_pkr FROM products p JOIN product_prices pp ON pp.product_id=p.id WHERE p.slug=? AND pp.size_ml=?").bind(slug,size).first();
+      if(!product||product.active!==1)return fail("A selected article is unavailable or has no price for that size.",409);
+      normalized.push({product_id:product.id,product_name:product.name,size_ml:size,unit_price_pkr:Number(product.price_pkr),quantity,line_total_pkr:Number(product.price_pkr)*quantity});
+    }
+    const zone=await env.DB.prepare("SELECT fee_pkr FROM delivery_zones WHERE city=? AND area=? AND active=1").bind(order.city,order.area).first();
+    if(!zone)return fail("The order delivery fee could not be verified. No changes were saved.",409);
+    const subtotal=normalized.reduce((sum,item)=>sum+item.line_total_pkr,0),total=subtotal+Number(zone.fee_pkr);
+    if(!Number.isSafeInteger(total)||total>10000000)return fail("The revised order total is outside the allowed range.");
+    const statements=[env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(id)];
+    for(const item of normalized)statements.push(env.DB.prepare("INSERT INTO order_items (order_id,product_id,product_name,size_ml,unit_price_pkr,quantity,line_total_pkr) VALUES (?,?,?,?,?,?,?)").bind(id,item.product_id,item.product_name,item.size_ml,item.unit_price_pkr,item.quantity,item.line_total_pkr));
+    statements.push(env.DB.prepare("UPDATE orders SET subtotal_pkr=?,delivery_fee_pkr=?,total_pkr=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(subtotal,zone.fee_pkr,total,id));
+    await env.DB.batch(statements);
+    await writeAudit(env,admin,null,"order.items_updated",{order_id:id,item_count:normalized.length,subtotal_pkr:subtotal,delivery_fee_pkr:zone.fee_pkr,total_pkr:total});
+    return json({ok:true,subtotal_pkr:subtotal,delivery_fee_pkr:zone.fee_pkr,total_pkr:total});
   }
   const statusMatch=url.pathname.match(/^\/api\/admin\/orders\/(\d+)\/status$/);
   if(request.method==="PATCH" && statusMatch) {
