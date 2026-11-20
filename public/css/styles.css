@@ -551,3 +551,24 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
     border-color: var(--line);
   }
 }
+
+/* Restore the original desktop logo size; compact only the header row. */
+@media (min-width: 821px) {
+  .topbar-inner {
+    height: 68px;
+    min-height: 68px;
+  }
+  .topbar-inner > a {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .brandmark {
+    display: block;
+    width: 220px;
+    max-width: 52vw;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+  }
+}
