@@ -2,7 +2,8 @@
 .hero{position:relative;isolation:isolate;min-height:min(760px,calc(100svh - 88px));height:clamp(560px,70vw,760px);overflow:hidden;background:radial-gradient(ellipse at 68% 48%,#1c5948 0%,#123b32 42%,#09271f 100%)}
 .hero:before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 72% 54%,rgba(198,161,91,.2),transparent 38%),linear-gradient(90deg,rgba(5,28,22,.76),rgba(5,28,22,.18) 58%,rgba(5,28,22,.08));pointer-events:none}
 .hero:after{z-index:2;pointer-events:none;background:linear-gradient(0deg,#123B32 0%,rgba(18,59,50,.08) 24%,transparent 65%)}
-.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.24;filter:saturate(.75);animation:none}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;filter:saturate(.75);animation:none}
+.hero.showroom-ready .hero-img{opacity:.14}
 .immersive-canvas{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
 .immersive-canvas:active{cursor:grabbing}
 .hero .wrap{position:relative;z-index:3;height:100%;display:flex;align-items:center;pointer-events:none}
