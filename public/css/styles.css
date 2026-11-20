@@ -572,3 +572,24 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
     object-fit: contain;
   }
 }
+
+
+/* Keep the logo vertically centered within the compact desktop header. */
+@media (min-width: 821px) {
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+  }
+  .topbar-inner > a {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-block: auto;
+  }
+  .topbar-inner > a .brandmark {
+    display: block;
+    margin: auto 0;
+  }
+}
