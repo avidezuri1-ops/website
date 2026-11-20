@@ -144,7 +144,7 @@ function renderNewArrivals(){
     photo.loading="lazy";
     photo.onerror=function(){photo.remove();};
     photo.onload=function(){var placeholder=art.querySelector("svg");if(placeholder)placeholder.remove();art.insertBefore(photo,badge);};
-    photo.src="images/"+slug(p.name)+".png";
+    photo.src="/images/"+slug(p.name)+".png";
     link.appendChild(art);
     var copy=el("div","new-arrival-copy");
     copy.appendChild(el("small","", "EXCLUSIVE · NEW ARRIVAL"));
