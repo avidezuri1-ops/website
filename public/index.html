@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Newsreader:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/styles.css">
 <link rel="stylesheet" href="/css/emerald-preview.css">
+<link rel="stylesheet" href="/css/immersive-showroom.css">
+<link rel="stylesheet" href="/css/immersive-catalogue.css">
 </head>
 <body>
 <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-fill"></span></div>
@@ -24,11 +26,12 @@
 </header>
 
 <section class="hero" id="top">
+  <canvas class="immersive-canvas" id="immersive-canvas" aria-label="Interactive Avidezuri perfume showroom. Move your pointer to explore the featured bottle." role="img"></canvas>
   <img class="hero-img" src="/images/hero-banner.jpg" width="1600" height="595" alt="Avidezuri customized perfume: premium quality, long lasting, unisex fragrances, crafted for you">
   <div class="wrap">
     <div class="hero-card">
-      <h1>Perfume made around you.</h1>
-      <p>Choose your fragrance in 30, 50 or 100 ml. We deliver across Karachi and you pay cash when it arrives.</p>
+      <h1>Experience the <span>true essence.</span></h1>
+      <p>Discover your signature fragrance in an immersive world of Avidezuri luxury. Choose your size and enjoy delivery across Karachi.</p>
       <div class="hero-cta">
         <a class="btn" href="#shop">Shop perfumes</a>
         <a class="btn ghost" href="https://wa.me/923181230098" target="_blank" rel="noopener noreferrer">Ask on WhatsApp</a>
@@ -40,6 +43,7 @@
       </ul>
     </div>
   </div>
+  <div class="showroom-hint" aria-hidden="true">Move to explore · Drag to discover</div>
 </section>
 
 
@@ -73,7 +77,7 @@
 <main>
   <section class="new-arrivals wrap" aria-labelledby="new-arrivals-title">
     <div class="new-arrivals-heading">
-      <div><p class="eyebrow">JUST ARRIVED · EXCLUSIVE COLLECTION</p><h2 id="new-arrivals-title">Meet the new arrivals.</h2><p class="hint">Three new exclusive fragrances, now in the Avidezuri collection.</p></div>
+      <div><p class="eyebrow">JUST ARRIVED · EXCLUSIVE COLLECTION</p><h2 id="new-arrivals-title">Meet the new arrivals.</h2><p class="hint">Explore six new exclusive fragrances in the Avidezuri collection.</p></div>
       <div class="new-arrivals-controls"><button class="slider-arrow" id="new-arrivals-prev" type="button" aria-label="Previous new arrivals">‹</button><button class="slider-arrow" id="new-arrivals-next" type="button" aria-label="Next new arrivals">›</button></div>
     </div>
     <div class="new-arrivals-track" id="new-arrivals-track" aria-label="New exclusive perfumes"></div>
@@ -179,5 +183,7 @@
 })();
 </script>
 <script src="/js/app.js" defer></script>
+<script type="module" src="/js/immersive-showroom.js"></script>
+<script src="/js/immersive-catalogue.js" defer></script>
 </body>
 </html>

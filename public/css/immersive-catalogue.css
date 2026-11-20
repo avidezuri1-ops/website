@@ -1,0 +1,21 @@
+/* Full-catalogue immersive presentation. Bottle PNGs stay untouched and uncropped. */
+#shop .grid{perspective:1400px;perspective-origin:50% 45%}
+#shop .card,.new-arrival-card{position:relative;transform-style:preserve-3d;will-change:transform;transition:transform .22s ease,box-shadow .22s ease;--tilt-x:0deg;--tilt-y:0deg;--light-x:50%;--light-y:35%}
+#shop .card{transform:perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(0);box-shadow:0 12px 28px rgba(5,28,22,.09)}
+#shop .card:before,.new-arrival-card:before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at var(--light-x) var(--light-y),rgba(220,197,143,.19),transparent 43%);opacity:0;transition:opacity .22s ease}
+#shop .card.is-tilting,.new-arrival-card.is-tilting{transition:box-shadow .18s ease;box-shadow:0 22px 42px rgba(5,28,22,.18),0 0 0 1px rgba(198,161,91,.28)}
+#shop .card.is-tilting:before,.new-arrival-card.is-tilting:before{opacity:1}
+#shop .card .art{transform-style:preserve-3d;overflow:visible;perspective:800px}
+#shop .card .art img{position:relative;z-index:1;transform:translateZ(28px) rotateY(calc(var(--tilt-y) * -.18)) rotateX(calc(var(--tilt-x) * -.12));transform-origin:50% 70%;transition:transform .22s ease;filter:drop-shadow(0 12px 12px rgba(5,28,22,.16));}
+#shop .card.is-tilting .art img{filter:drop-shadow(0 20px 17px rgba(5,28,22,.22))}
+#shop .card .body{transform:translateZ(12px)}
+.new-arrivals-track{perspective:1200px}
+.new-arrival-card{transform:perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));transform-style:preserve-3d}
+.new-arrival-card .new-arrival-art{transform-style:preserve-3d}
+.new-arrival-card .new-arrival-art img{transform:translateZ(24px);filter:drop-shadow(0 14px 13px rgba(5,28,22,.17));transition:transform .22s ease,filter .22s ease}
+.new-arrival-card.is-tilting .new-arrival-art img{transform:translateZ(42px) scale(1.025);filter:drop-shadow(0 20px 18px rgba(5,28,22,.24))}
+@media(hover:none),(prefers-reduced-motion:reduce){
+ #shop .card,.new-arrival-card{transform:none!important;transition:none;will-change:auto}
+ #shop .card .art img,.new-arrival-card .new-arrival-art img{transform:none!important;transition:none;filter:drop-shadow(0 8px 9px rgba(5,28,22,.12))}
+ #shop .card:before,.new-arrival-card:before{display:none}
+}
