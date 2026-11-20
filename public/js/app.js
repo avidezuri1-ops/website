@@ -51,7 +51,7 @@ function productKey(n){
   return String(n).toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 var exclusiveKeys = EXCLUSIVE_PRODUCTS.map(productKey);
-var NEW_ARRIVALS = ["DE MARJ", "DE IGNITE OUD", "DE SUMMER OUD"].map(productKey);
+var NEW_ARRIVALS = ["DE MARJ", "DE IGNITE OUD", "DE SUMMER OUD", "DE NOIR", "DE SWIM", "DE BLACK"].map(productKey);
 CONFIG.products = CONFIG.products.map(function(p, i){
   if(typeof p === "string") p = { name: p };
   p.category = p.category || (exclusiveKeys.indexOf(productKey(p.name)) >= 0 ? "exclusive" : "budget");
