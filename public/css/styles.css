@@ -519,3 +519,35 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
 @media(max-width:560px){.new-arrivals-heading{align-items:flex-start}.new-arrivals-heading h2{font-size:1.8rem}.new-arrivals-heading .hint{font-size:.92rem}.new-arrival-card{flex-basis:82%}.new-arrival-copy span{font-size:.7rem}}
 @media(prefers-reduced-motion:reduce){.new-arrival-card,.new-arrivals-track{scroll-behavior:auto;transition:none}}
 
+
+/* ===== Compact desktop header and roomier navigation controls ===== */
+@media (min-width: 821px) {
+  .topbar-inner {
+    min-height: 66px;
+    gap: 18px;
+  }
+  .brandmark {
+    width: 196px;
+    max-height: 50px;
+    object-fit: contain;
+  }
+  .top-actions {
+    gap: 8px;
+  }
+  .top-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: color .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .top-actions a:hover {
+    background: rgba(169,133,71,.08);
+    border-color: var(--line);
+  }
+}
