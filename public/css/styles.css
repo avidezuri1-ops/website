@@ -618,3 +618,56 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
     z-index: 3;
   }
 }
+
+
+/* ===== Final desktop header alignment: centered, cropped logo with independent nav ===== */
+@media (min-width: 821px) {
+  .topbar-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px minmax(0, 1fr);
+    align-items: center;
+    justify-content: stretch;
+    height: 68px;
+    min-height: 68px;
+    gap: 0;
+    position: relative;
+  }
+  .topbar-inner > a {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    inset: auto;
+    transform: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    width: 220px;
+    height: 68px;
+    margin: 0;
+    overflow: hidden;
+    z-index: 2;
+  }
+  .topbar-inner > a .brandmark {
+    display: block;
+    flex: 0 0 220px;
+    width: 220px;
+    height: 68px;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    object-fit: cover;
+    object-position: center;
+  }
+  .topbar-inner .top-actions {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    position: relative;
+    z-index: 3;
+    margin: 0;
+    min-width: 0;
+    gap: 8px;
+  }
+}
