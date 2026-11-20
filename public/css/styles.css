@@ -593,3 +593,28 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
     margin: auto 0;
   }
 }
+
+/* Center the desktop logo across the viewport while keeping navigation right-aligned. */
+@media (min-width: 821px) {
+  .topbar-inner {
+    position: relative;
+    justify-content: flex-end;
+  }
+  .topbar-inner > a {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    z-index: 2;
+  }
+  .topbar-inner > a .brandmark {
+    display: block;
+    margin: 0;
+  }
+  .top-actions {
+    margin-left: auto;
+    position: relative;
+    z-index: 3;
+  }
+}
