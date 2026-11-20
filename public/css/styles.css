@@ -378,11 +378,18 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
 #shop .card{padding:14px}
 #shop .art{aspect-ratio:4/5}
 #shop .art.photo img{
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  box-sizing:border-box;
+  padding:8px;
   object-fit:contain;
-  transform:scale(1.13);
+  object-position:center;
+  transform:none;
   transform-origin:center;
 }
-#shop .card:hover .art.photo img{transform:scale(1.18)}
+#shop .card:hover .art.photo img{transform:none}
 #shop .cname{
   font-size:1.12rem;
   line-height:1.3;
@@ -393,15 +400,15 @@ footer{background:var(--night);color:#e1d8c9}footer .footer-service h2{color:var
 }
 @media(max-width:900px){
   #shop .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 16px}
-  #shop .art.photo img{transform:scale(1.1)}
+  #shop .art.photo img{transform:none}
   #shop .cname{font-size:1rem}
 }
 @media(max-width:620px){
   #shop .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
   #shop .card{padding:9px}
   #shop .art{aspect-ratio:4/5}
-  #shop .art.photo img{transform:scale(1.08)}
-  #shop .card:hover .art.photo img{transform:scale(1.1)}
+  #shop .art.photo img{transform:none}
+  #shop .card:hover .art.photo img{transform:none}
   #shop .cname{font-size:.88rem;letter-spacing:.06em;min-height:2.5em}
 }
 
