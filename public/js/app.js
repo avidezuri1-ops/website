@@ -139,16 +139,9 @@ function renderNewArrivals(){
     art.innerHTML=bottle(p.color);
     var badge=el("span","new-product-badge","NEW");
     art.appendChild(badge);
-    var photo=new Image();
-    photo.alt=p.name+" perfume bottle";
-    photo.loading="eager";
-    photo.decoding="async";
-    photo.onerror=function(){photo.remove();};
-    photo.onload=function(){var placeholder=art.querySelector("svg");if(placeholder)placeholder.remove();};
-    // Attach the image before starting its request so lazy loading cannot stall
-    // while the image element is detached from the document.
-    art.insertBefore(photo,badge);
-    photo.src="/images/"+slug(p.name)+".png";
+    // Use the exact same image loader and relative asset path as the catalogue.
+    // This keeps slider and product-card image behavior in sync.
+    tryPhoto(art,p);
     link.appendChild(art);
     var copy=el("div","new-arrival-copy");
     copy.appendChild(el("small","", "EXCLUSIVE · NEW ARRIVAL"));
