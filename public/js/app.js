@@ -141,9 +141,13 @@ function renderNewArrivals(){
     art.appendChild(badge);
     var photo=new Image();
     photo.alt=p.name+" perfume bottle";
-    photo.loading="lazy";
+    photo.loading="eager";
+    photo.decoding="async";
     photo.onerror=function(){photo.remove();};
-    photo.onload=function(){var placeholder=art.querySelector("svg");if(placeholder)placeholder.remove();art.insertBefore(photo,badge);};
+    photo.onload=function(){var placeholder=art.querySelector("svg");if(placeholder)placeholder.remove();};
+    // Attach the image before starting its request so lazy loading cannot stall
+    // while the image element is detached from the document.
+    art.insertBefore(photo,badge);
     photo.src="/images/"+slug(p.name)+".png";
     link.appendChild(art);
     var copy=el("div","new-arrival-copy");
