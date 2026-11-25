@@ -9,6 +9,13 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "avidezuri-preview",
+      "database_id": "09ad3f01-e071-46d2-ab12-1abf48609593"
+    }
+  ],
   "observability": {
     "enabled": true
   }
