@@ -42,12 +42,20 @@ const products: Product[] = [
 type CartLine = { product: Product; sizeIndex: number; quantity: number };
 const money = (value: number) => `Rs ${value.toLocaleString("en-PK")}`;
 
+const deliveryZones = [
+  { fee: 200, areas: ["Saddar", "Clifton", "DHA (Defence)", "PECHS", "Tariq Road", "Gulshan-e-Iqbal", "Gulistan-e-Jauhar", "North Nazimabad", "Nazimabad", "Federal B Area", "Garden", "Bahadurabad"] },
+  { fee: 300, areas: ["Korangi", "Landhi", "Malir", "Shah Faisal Colony", "Scheme 33", "Gulshan-e-Maymar", "North Karachi", "New Karachi", "Orangi Town", "SITE", "Liaquatabad", "Lyari", "Baldia", "Keamari"] },
+  { fee: 400, areas: ["Bin Qasim", "Steel Town", "Gadap", "Surjani Town", "Hawksbay", "Manghopir", "Bahria Town Karachi", "DHA City", "Gulshan-e-Hadeed", "Other area in Karachi"] },
+];
+const deliveryAreas = deliveryZones.flatMap((zone) => zone.areas.map((area) => ({ area, fee: zone.fee }))).sort((a, b) => a.area.localeCompare(b.area));
+
 export default function Storefront() {
   const [category, setCategory] = useState<"all" | "budget" | "exclusive">("all");
   const [search, setSearch] = useState("");
   const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [checkout, setCheckout] = useState({ customer_name: "", phone: "", area: "", address: "", notes: "" });
 
   const visibleProducts = useMemo(() => products.filter((product) => {
     const matchesCategory = category === "all" || product.category === category;
@@ -56,6 +64,8 @@ export default function Storefront() {
 
   const itemCount = cart.reduce((sum, line) => sum + line.quantity, 0);
   const subtotal = cart.reduce((sum, line) => sum + line.product.prices[line.sizeIndex] * line.quantity, 0);
+  const deliveryFee = deliveryAreas.find((entry) => entry.area === checkout.area)?.fee ?? 0;
+  const orderTotal = subtotal + deliveryFee;
 
   function add(product: Product) {
     const sizeIndex = selectedSizes[product.slug] ?? 0;
@@ -150,7 +160,32 @@ export default function Storefront() {
           <div className="cart-heading"><div><p className="kicker">YOUR SELECTION</p><h2>Your bag <span>({itemCount})</span></h2></div><button className="close-cart" onClick={() => setCartOpen(false)} aria-label="Close bag">×</button></div>
           {cart.length === 0 ? <div className="cart-empty"><p>Your bag is waiting for a signature scent.</p><button onClick={() => { setCartOpen(false); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }}>EXPLORE FRAGRANCES ↗</button></div> :
             <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.slug + line.sizeIndex}><img className="cart-line-image" src={`https://avidezuri.com/images/${line.product.slug}.png`} alt={line.product.name} loading="lazy" /><div className="cart-line-details"><b>{line.product.name}</b><span>{sizes[line.sizeIndex]} ml · {money(line.product.prices[line.sizeIndex])}</span><div className="quantity-control"><button onClick={() => changeQuantity(line.product.slug, line.sizeIndex, -1)} aria-label="Decrease quantity">−</button><span>{line.quantity}</span><button onClick={() => changeQuantity(line.product.slug, line.sizeIndex, 1)} aria-label="Increase quantity">+</button></div></div><strong>{money(line.product.prices[line.sizeIndex] * line.quantity)}</strong></div>)}</div>
-            <div className="cart-total"><span>Subtotal</span><strong>{money(subtotal)}</strong></div><p className="delivery-note">Delivery charges are calculated by Karachi area at checkout. Cash on delivery.</p><button className="checkout-placeholder" disabled>CHECKOUT · COMING IN NEXT PHASE</button><p className="checkout-note">Your bag is a preview experience. Order submission will be connected to the secure Avidezuri order system after checkout testing.</p></>}
+            <section className="checkout-form" aria-label="Preview checkout details">
+              <p className="kicker">DELIVERY DETAILS</p>
+              <label>Full name
+                <input value={checkout.customer_name} onChange={(event) => setCheckout((current) => ({ ...current, customer_name: event.target.value }))} maxLength={100} placeholder="Your full name" autoComplete="name" />
+              </label>
+              <label>Phone number
+                <input value={checkout.phone} onChange={(event) => setCheckout((current) => ({ ...current, phone: event.target.value }))} maxLength={30} placeholder="03XX XXXXXXX" inputMode="tel" autoComplete="tel" />
+              </label>
+              <label>Karachi delivery area
+                <select value={checkout.area} onChange={(event) => setCheckout((current) => ({ ...current, area: event.target.value }))}>
+                  <option value="">Select your area</option>
+                  {deliveryAreas.map((entry) => <option key={entry.area} value={entry.area}>{entry.area} · {money(entry.fee)} delivery</option>)}
+                </select>
+              </label>
+              <label>Complete delivery address
+                <textarea value={checkout.address} onChange={(event) => setCheckout((current) => ({ ...current, address: event.target.value }))} maxLength={500} rows={3} placeholder="House / flat, street, block and nearby landmark" autoComplete="street-address" />
+              </label>
+              <label>Order notes <span className="optional-label">Optional</span>
+                <textarea value={checkout.notes} onChange={(event) => setCheckout((current) => ({ ...current, notes: event.target.value }))} maxLength={500} rows={2} placeholder="Any delivery instructions?" />
+              </label>
+              <div className="cart-total"><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
+              <div className="cart-total"><span>Delivery {checkout.area ? `· ${checkout.area}` : ""}</span><strong>{checkout.area ? money(deliveryFee) : "Select area"}</strong></div>
+              <div className="cart-total order-grand-total"><span>Total · Cash on delivery</span><strong>{money(orderTotal)}</strong></div>
+              <button className="checkout-placeholder" disabled>ORDER SUBMISSION LOCKED IN PREVIEW</button>
+              <p className="checkout-note">Preview only. No order will be submitted, saved, or sent to WhatsApp until the isolated test order service is connected and verified.</p>
+            </section></>}
         </aside>
       </div>}
     </main>
