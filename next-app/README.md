@@ -7,7 +7,9 @@ This directory is a separate Next.js 16 + React + TypeScript foundation for the 
 - This app is isolated under `next-app/`; the existing production storefront and Worker entry point remain unchanged.
 - Its Wrangler configuration uses the distinct Worker name `avidezuri-next-preview`.
 - No D1 binding, production database ID, secrets, custom domain, routes, or production environment configuration is included.
-- There is intentionally no deploy script in this foundation PR.
+- The preview deploy workflow is manual-only (`workflow_dispatch`) and targets only the `avidezuri-next-preview` Worker on `workers.dev`.
+- The preview workflow requires GitHub Environment secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; it does not read or use production credentials.
+- The preview Worker has no D1 binding, custom domain, or production route. Do not add production resources to this configuration.
 - The current landing page is design scaffolding only. It does not connect to orders, products, checkout, WhatsApp, admin authentication, or customer data.
 - Do not add production credentials or connect the production D1 database during preview work.
 
