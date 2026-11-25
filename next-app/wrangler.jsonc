@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "avidezuri-next-preview",
+  "workers_dev": true,
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-25",
   "compatibility_flags": ["nodejs_compat"],
