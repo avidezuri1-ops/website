@@ -63,7 +63,7 @@ export async function POST(request: Request) {
   const notes = clean(body.notes, 500);
   const city = "Karachi";
 
-  if (!customerName || phone.replace(/\\D/g, "").length < 7 || !area || !address) {
+  if (!customerName || phone.replace(/\D/g, "").length < 7 || !area || !address) {
     return response({ error: "Please provide your name, a valid phone number, delivery area and address." }, 400);
   }
   if (!Array.isArray(body.items) || body.items.length < 1 || body.items.length > 30) {
