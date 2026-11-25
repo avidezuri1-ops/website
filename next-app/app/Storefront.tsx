@@ -56,6 +56,9 @@ export default function Storefront() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkout, setCheckout] = useState({ customer_name: "", phone: "", area: "", address: "", notes: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [orderResult, setOrderResult] = useState<{ order_number: string; total_pkr: number } | null>(null);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const visibleProducts = useMemo(() => products.filter((product) => {
     const matchesCategory = category === "all" || product.category === category;
@@ -75,6 +78,49 @@ export default function Storefront() {
       return [...current, { product, sizeIndex, quantity: 1 }];
     });
     setCartOpen(true);
+  }
+
+  async function submitOrder() {
+    setCheckoutError("");
+    if (!checkout.customer_name.trim() || checkout.phone.replace(/\D/g, "").length < 7 || !checkout.area || !checkout.address.trim()) {
+      setCheckoutError("Please complete your name, valid phone number, delivery area and address.");
+      return;
+    }
+    if (cart.length === 0) {
+      setCheckoutError("Add at least one fragrance to your bag.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const result = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          customer_name: checkout.customer_name,
+          phone: checkout.phone,
+          city: "Karachi",
+          area: checkout.area,
+          address: checkout.address,
+          notes: checkout.notes,
+          items: cart.map((line) => ({
+            slug: line.product.slug,
+            size_ml: sizes[line.sizeIndex],
+            quantity: line.quantity,
+          })),
+        }),
+      });
+      const data = await result.json();
+      if (!result.ok || !data?.ok || !data?.order?.order_number) {
+        throw new Error(data?.error || "We could not save your preview order. Please try again.");
+      }
+      setOrderResult({ order_number: data.order.order_number, total_pkr: data.order.total_pkr });
+      setCart([]);
+      setCheckout({ customer_name: "", phone: "", area: "", address: "", notes: "" });
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function changeQuantity(slug: string, sizeIndex: number, delta: number) {
@@ -158,7 +204,7 @@ export default function Storefront() {
       {cartOpen && <div className="cart-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}>
         <aside className="cart-panel" role="dialog" aria-modal="true" aria-label="Shopping bag">
           <div className="cart-heading"><div><p className="kicker">YOUR SELECTION</p><h2>Your bag <span>({itemCount})</span></h2></div><button className="close-cart" onClick={() => setCartOpen(false)} aria-label="Close bag">×</button></div>
-          {cart.length === 0 ? <div className="cart-empty"><p>Your bag is waiting for a signature scent.</p><button onClick={() => { setCartOpen(false); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }}>EXPLORE FRAGRANCES ↗</button></div> :
+          {orderResult ? <div className="cart-empty"><p>Your preview order has been saved successfully.</p><strong>{orderResult.order_number}</strong><p>Total: {money(orderResult.total_pkr)} · Cash on delivery</p><p className="checkout-note">This is a test order in the isolated preview database only. It has not been sent to the live store or WhatsApp.</p><button onClick={() => { setOrderResult(null); setCartOpen(false); }}>CONTINUE SHOPPING ↗</button></div> : cart.length === 0 ? <div className="cart-empty"><p>Your bag is waiting for a signature scent.</p><button onClick={() => { setCartOpen(false); document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" }); }}>EXPLORE FRAGRANCES ↗</button></div> :
             <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.slug + line.sizeIndex}><img className="cart-line-image" src={`https://avidezuri.com/images/${line.product.slug}.png`} alt={line.product.name} loading="lazy" /><div className="cart-line-details"><b>{line.product.name}</b><span>{sizes[line.sizeIndex]} ml · {money(line.product.prices[line.sizeIndex])}</span><div className="quantity-control"><button onClick={() => changeQuantity(line.product.slug, line.sizeIndex, -1)} aria-label="Decrease quantity">−</button><span>{line.quantity}</span><button onClick={() => changeQuantity(line.product.slug, line.sizeIndex, 1)} aria-label="Increase quantity">+</button></div></div><strong>{money(line.product.prices[line.sizeIndex] * line.quantity)}</strong></div>)}</div>
             <section className="checkout-form" aria-label="Preview checkout details">
               <p className="kicker">DELIVERY DETAILS</p>
@@ -183,8 +229,9 @@ export default function Storefront() {
               <div className="cart-total"><span>Subtotal</span><strong>{money(subtotal)}</strong></div>
               <div className="cart-total"><span>Delivery {checkout.area ? `· ${checkout.area}` : ""}</span><strong>{checkout.area ? money(deliveryFee) : "Select area"}</strong></div>
               <div className="cart-total order-grand-total"><span>Total · Cash on delivery</span><strong>{money(orderTotal)}</strong></div>
-              <button className="checkout-placeholder" disabled>ORDER SUBMISSION LOCKED IN PREVIEW</button>
-              <p className="checkout-note">Preview only. No order will be submitted, saved, or sent to WhatsApp until the isolated test order service is connected and verified.</p>
+              {checkoutError && <p className="checkout-error" role="alert">{checkoutError}</p>}
+              <button className="checkout-placeholder" onClick={submitOrder} disabled={submitting || cart.length === 0 || !checkout.customer_name.trim() || checkout.phone.replace(/\D/g, "").length < 7 || !checkout.area || !checkout.address.trim()}>{submitting ? "SAVING PREVIEW ORDER…" : "PLACE TEST ORDER"}</button>
+              <p className="checkout-note">Isolated preview test only. Orders are saved to the separate preview database and are never sent to the live store or WhatsApp.</p>
             </section></>}
         </aside>
       </div>}
