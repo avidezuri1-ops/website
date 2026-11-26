@@ -528,3 +528,117 @@ main{background:#17120f!important;color:#f0e7d8!important}
   .cart-panel{padding:24px 18px}
 }
 @media(prefers-reduced-motion:reduce){.hero-banner img{transition:none}}
+
+
+/* Preview refresh: forest emerald, warm ivory and brushed antique gold */
+:root{--ink:#e9e4d6;--paper:#10251f;--muted:#b8b29d;--line:rgba(211,184,125,.24);--gold:#c9aa70}
+html,body{background:#10251f;color:#e9e4d6}
+main{background:#10251f!important;color:#e9e4d6!important}
+.announcement{background:#0b1b17;color:#d8c59e;border-bottom:1px solid rgba(201,170,112,.25)}
+.store-header{background:linear-gradient(180deg,#18382e,#10251f)!important;border-color:rgba(201,170,112,.32)!important}
+.store-logo img{
+  display:block;width:clamp(300px,29vw,410px)!important;height:116px!important;
+  max-width:100%;object-fit:contain;object-position:left center;
+  transform:none!important;filter:none!important;
+  background:#eee5d2;border:1px solid rgba(201,170,112,.55);border-radius:3px;padding:7px 16px;
+}
+.store-header nav a{color:#eee5d2!important}
+.store-header nav a:hover{color:#dfc18a!important}
+.bag-button{color:#f1e8d6!important}
+.hero-banner{background:#18382e;border-color:rgba(201,170,112,.3)}
+.collection-strip{background:linear-gradient(120deg,#18382e,#21483a 58%,#263d32)!important;color:#f1e8d6}
+.collection-strip .kicker,.kicker{color:#d5b77d}
+.collection-strip>a{border-color:rgba(213,183,125,.3)}
+.collection-strip>a span{color:#d5b77d}
+.collection-strip>a b{color:#f1e8d6}
+.catalogue-section{background:#10251f!important;color:#f1e8d6}
+.catalogue-heading h2,.catalogue-subtitle{color:#f1e8d6}
+.catalogue-subtitle,.result-count{color:#b8b29d}
+.search-box{background:#18382e;border-color:rgba(213,183,125,.42)}
+.search-box input{color:#f1e8d6}
+.search-box input::placeholder{color:#c1b99f}
+.filter-tabs button{color:#c7c2b0}
+.filter-tabs button.active{color:#f5ead4;border-color:#d5b77d}
+.product-art{background:radial-gradient(ellipse at 50% 42%,#315c49 0%,#214335 52%,#183329 100%);border:1px solid rgba(213,183,125,.2)}
+.product-art img{mix-blend-mode:normal!important}
+.product-category{color:#ead8b5!important}
+.new-tag{background:#c6a66e;color:#173126}
+.product-title-row h3{color:#f1e8d6!important}
+.product-title-row>span{color:#c9aa70}
+.size-options button{color:#e6dcc7!important;border-color:rgba(213,183,125,.42)!important;background:#18382e!important}
+.size-options button.selected{color:#183329!important;background:#d5b77d!important;border-color:#ead6a9!important;box-shadow:0 0 0 1px #ead6a9!important}
+.product-buy-row{border-color:rgba(213,183,125,.28)}
+.product-buy-row strong{color:#f5ead4!important}
+.product-buy-row button,.cart-empty button,.checkout-form .checkout-placeholder{
+  background:linear-gradient(135deg,#d5b77d,#a98750)!important;border-color:#d5b77d!important;color:#142a22!important;
+}
+.product-buy-row button:hover{background:#ead3a2!important}
+.brand-note{background:linear-gradient(125deg,#1e4537,#10251f 62%,#284a39)!important;color:#f1e8d6!important;border-color:rgba(213,183,125,.3)}
+.brand-note .kicker{color:#d5b77d}
+.brand-note h2 i{color:#dfc18a}
+.brand-note>p:not(.kicker){color:#d2d0bf}
+.light-link{color:#f1e8d6;border-color:#d5b77d}
+.cart-overlay{background:rgba(0,0,0,.72)}
+.cart-panel{background:#183329!important;color:#f1e8d6!important;border-color:rgba(213,183,125,.35)}
+.cart-heading{border-color:rgba(213,183,125,.28)}
+.cart-heading h2,.cart-line b,.cart-line>strong{color:#f1e8d6}
+.cart-line{border-color:rgba(213,183,125,.2)}
+.cart-line-image{background:#24483a}
+.cart-line-details span,.cart-total span,.cart-total strong{color:#d2c8b2}
+.cart-total{border-color:rgba(213,183,125,.25)}
+.checkout-form{border-color:rgba(213,183,125,.28)}
+.checkout-form>label{color:#e6dcc7!important}
+.checkout-form input,.checkout-form select,.checkout-form textarea{background:#10251f!important;color:#f1e8d6!important;border-color:rgba(213,183,125,.42)!important}
+.checkout-form input::placeholder,.checkout-form textarea::placeholder{color:#b8b29d!important}
+.checkout-form .checkout-note,.delivery-note{color:#c4bda9!important}
+.checkout-form .order-grand-total{border-color:#d5b77d}
+.mouse-arrow{border-color:#d5b77d;color:#d5b77d}
+
+/* Brand story and editorial Instagram slider */
+.brand-story{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(130px,.7fr) 2.2fr .6fr;
+  gap:5vw;align-items:center;padding:clamp(70px,10vw,145px) 8vw;
+  background:linear-gradient(125deg,#18382e 0%,#10251f 60%,#1e4033 100%);
+  border-top:1px solid rgba(213,183,125,.22);border-bottom:1px solid rgba(213,183,125,.22);
+}
+.story-index{align-self:start;padding-top:10px;color:#d5b77d;font-size:9px;letter-spacing:.2em}
+.story-copy{max-width:790px}
+.story-copy h2{margin:12px 0 22px;color:#f1e8d6;font-family:"Playfair Display",serif;font-size:clamp(30px,4.4vw,62px);font-weight:400;line-height:1.13}
+.story-copy h2 i{color:#d5b77d}
+.story-copy>p:not(.kicker){max-width:570px;color:#c9c9b8;font-size:13px;line-height:1.9}
+.story-link{display:inline-flex;gap:18px;margin-top:22px;padding-bottom:9px;border-bottom:1px solid #d5b77d;color:#f1e8d6;font-size:9px;letter-spacing:.16em}
+.story-mark{font-family:"Playfair Display",serif;font-size:clamp(100px,17vw,230px);color:rgba(213,183,125,.13);line-height:1}
+.story-mark span{color:#d5b77d}
+.instagram-section{padding:clamp(58px,8vw,105px) 6vw;background:#0b1b17;color:#f1e8d6;overflow:hidden}
+.instagram-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:30px}
+.instagram-heading h2{margin:8px 0 0;font-family:"Playfair Display",serif;font-size:clamp(30px,4vw,52px);font-weight:400}
+.instagram-heading h2 i{color:#d5b77d}
+.instagram-handle{color:#c7b58d;font-size:9px;letter-spacing:.16em;white-space:nowrap}
+.instagram-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);grid-auto-columns:clamp(220px,24vw,330px);gap:16px;overflow-x:auto;padding:4px 2px 18px;scroll-snap-type:x mandatory;scrollbar-color:#9d8457 #183329;scrollbar-width:thin}
+.instagram-post{display:block;min-width:0;scroll-snap-align:start}
+.instagram-image{height:clamp(240px,29vw,390px);position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse,#315c49,#183329)}
+.instagram-image img{width:78%;height:82%;object-fit:contain;mix-blend-mode:normal;transition:transform .5s ease}
+.instagram-post:hover .instagram-image img{transform:scale(1.06)}
+.instagram-number{position:absolute;top:14px;left:15px;color:#ead8b5;font-size:9px;letter-spacing:.16em}
+.instagram-glyph{position:absolute;right:14px;top:10px;color:#ead8b5;font-size:26px}
+.instagram-caption{display:flex;flex-direction:column;gap:6px;padding:14px 2px}
+.instagram-caption b{color:#f1e8d6;font-size:10px;letter-spacing:.12em}
+.instagram-caption span{color:#b8b29d;font-family:"Playfair Display",serif;font-size:15px;font-style:italic}
+.store-footer{min-height:132px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px 6vw;background:#07130f!important;border-top:1px solid rgba(213,183,125,.3);color:#e9e0cf}
+.store-footer .footer-logo img{width:clamp(170px,18vw,230px)!important;height:72px!important;padding:6px 12px}
+.store-footer>span{color:#b8b29d;font-size:8px;letter-spacing:.18em}
+@media(max-width:760px){
+ .store-header{min-height:116px;height:auto;background:#18382e!important}
+ .store-logo img{width:clamp(210px,66vw,270px)!important;height:78px!important;padding:6px 12px}
+ .store-header nav{border-top:1px solid rgba(213,183,125,.2);padding-top:10px}
+ .brand-story{grid-template-columns:1fr;gap:20px;padding:62px 7vw}
+ .story-index{padding:0}
+ .story-mark{position:absolute;right:5vw;bottom:20px;font-size:100px}
+ .instagram-section{padding:58px 5vw}
+ .instagram-heading{align-items:start;flex-direction:column;gap:12px}
+ .instagram-track{grid-auto-columns:78vw;gap:12px}
+ .instagram-image{height:78vw;max-height:380px}
+ .store-footer{align-items:flex-start;flex-direction:column;gap:14px;padding:25px 7vw}
+ .store-footer .footer-logo img{width:190px!important;height:68px!important}
+}
+@media(prefers-reduced-motion:reduce){.instagram-image img{transition:none}}

@@ -141,7 +141,7 @@ export default function Storefront() {
       <div className="mouse-arrow" style={{ left: cursor.x, top: cursor.y }} aria-hidden="true"><span>↗</span></div>
       <div className="announcement">COMPLIMENTARY FRAGRANCE EXPERIENCE · CASH ON DELIVERY IN KARACHI</div>
       <header className="store-header">
-        <a className="store-logo" href="#" aria-label="Avidezuri home"><img src="https://avidezuri.com/logo.png" alt="AVIDEZURI" /></a>
+        <a className="store-logo" href="#" aria-label="Avidezuri home"><img src="https://avidezuri.com/logo.png" alt="AVIDEZURI" fetchPriority="high" /></a>
         <nav aria-label="Main navigation">
           <a href="#catalogue" onClick={() => setCategory("all")}>All fragrances</a><a href="#catalogue" onClick={() => setCategory("exclusive")}>Exclusive</a><a href="#catalogue" onClick={() => setCategory("budget")}>Everyday</a>
         </nav>
@@ -198,7 +198,40 @@ export default function Storefront() {
         <a className="light-link" href="#catalogue">FIND YOUR SIGNATURE ↗</a>
       </section>
 
-      <footer className="store-footer"><a className="store-logo" href="#">AVIDEZURI<span>®</span></a><span>THE ART OF FRAGRANCE</span><span>© {new Date().getFullYear()} AVIDEZURI</span></footer>
+      <section className="brand-story" id="our-story">
+        <div className="story-index">01 — OUR STORY</div>
+        <div className="story-copy">
+          <p className="kicker">THE AVIDEZURI POINT OF VIEW</p>
+          <h2>Fragrance is more than a finishing touch.<br /><i>It becomes part of your story.</i></h2>
+          <p>We believe a signature scent should feel personal — an expression of mood, memory and presence. Explore the collection and find the fragrance that feels unmistakably yours.</p>
+          <a href="#catalogue" className="story-link">DISCOVER YOUR SIGNATURE <span>↗</span></a>
+        </div>
+        <div className="story-mark" aria-hidden="true">A<span>.</span></div>
+      </section>
+
+      <section className="instagram-section" aria-label="Avidezuri Instagram-style post slider">
+        <div className="instagram-heading">
+          <div><p className="kicker">A GLIMPSE INTO OUR WORLD</p><h2>The Avidezuri <i>journal.</i></h2></div>
+          <span className="instagram-handle">INSTAGRAM EDIT · 01—05</span>
+        </div>
+        <div className="instagram-track">
+          {[
+            { slug: "de-marj", name: "DE MARJ", caption: "A signature in the making" },
+            { slug: "de-ignite-oud", name: "DE IGNITE OUD", caption: "Depth, warmth, presence" },
+            { slug: "de-summer-oud", name: "DE SUMMER OUD", caption: "A brighter kind of bold" },
+            { slug: "de-night", name: "DE NIGHT", caption: "Made for after hours" },
+            { slug: "de-cristal-rouge", name: "DE CRISTAL ROUGE", caption: "An unmistakable impression" },
+          ].map((post, index) => <a className="instagram-post" href="#catalogue" key={post.slug}>
+            <div className="instagram-image"><img src={`https://avidezuri.com/images/${post.slug}.png`} alt={post.name} loading="lazy" /><span className="instagram-number">0{index + 1}</span><span className="instagram-glyph" aria-hidden="true">◎</span></div>
+            <div className="instagram-caption"><b>{post.name}</b><span>{post.caption}</span></div>
+          </a>)}
+        </div>
+      </section>
+
+      <footer className="store-footer">
+        <a className="store-logo footer-logo" href="#" aria-label="Avidezuri home"><img src="https://avidezuri.com/logo.png" alt="AVIDEZURI" loading="lazy" /></a>
+        <span>THE ART OF FRAGRANCE</span><span>© {new Date().getFullYear()} AVIDEZURI</span>
+      </footer>
 
       {cartOpen && <div className="cart-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setCartOpen(false); }}>
         <aside className="cart-panel" role="dialog" aria-modal="true" aria-label="Shopping bag">
