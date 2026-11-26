@@ -150,19 +150,8 @@ export default function Storefront() {
         </div>
       </header>
 
-      <section className="editorial-hero" id="story">
-        <div className="hero-copy">
-          <p className="kicker">THE ART OF FRAGRANCE · EST. AVIDEZURI</p>
-          <h1>A scent that<br />speaks <i>before you.</i></h1>
-          <p className="hero-intro">Discover a signature that stays long after the moment has passed. Crafted for presence, made to be remembered.</p>
-          <a className="dark-link" href="#catalogue">EXPLORE THE COLLECTION <span>↗</span></a>
-          <div className="hero-footnote">SCENT IS THE MOST<br />INTIMATE FORM OF MEMORY.</div>
-        </div>
-        <div className="hero-visual" aria-label="Fragrance-inspired sculptural still life">
-          <div className="visual-orbit orbit-a" /><div className="visual-orbit orbit-b" />
-          <div className="visual-pedestal" /><div className="visual-bottle"><div className="bottle-cap" /><div className="bottle-neck" /><div className="bottle-body"><span>AVIDEZURI</span></div></div>
-          <span className="visual-label">EAU DE PARFUM<br />A PERSONAL SIGNATURE</span>
-        </div>
+      <section className="hero-banner" id="story" aria-label="Avidezuri fragrance campaign">
+        <img src="https://avidezuri.com/images/hero-banner.jpg" alt="Avidezuri fragrance collection campaign" />
       </section>
 
       <section className="collection-strip" id="collections">
