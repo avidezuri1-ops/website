@@ -312,7 +312,8 @@ main[data-theme="rose"] .product-buy-row button,main[data-theme="rose"] .cart-em
 .collection-strip>a:hover b{color:var(--gold);transform:translateX(4px)}
 .collection-strip>a b{transition:transform .25s,color .25s}
 @media(max-width:760px){
- .store-header{grid-template-columns:1fr auto}
+ .store-header{height:auto;min-height:70px;padding:10px 5vw 8px;grid-template-columns:1fr auto;row-gap:7px}
+ .store-header nav{display:flex;grid-column:1/-1;grid-row:2;justify-content:space-between;gap:10px;padding:0 0 5px;font-size:8px;letter-spacing:.08em}
  .store-logo img{width:112px;height:42px}
  .header-actions{gap:10px}
  .theme-switcher{gap:2px}
