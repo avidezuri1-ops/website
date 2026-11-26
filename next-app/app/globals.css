@@ -653,3 +653,16 @@ main{background:#10251f!important;color:#e9e4d6!important}
   padding: 0 !important;
   box-shadow: none !important;
 }
+
+
+/* Force the dark logo artwork to render as a clean light mark on emerald, without its white matte */
+.store-logo img,
+.store-footer .footer-logo img {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  filter: invert(1) grayscale(1) !important;
+  mix-blend-mode: screen !important;
+}
