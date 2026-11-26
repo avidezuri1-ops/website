@@ -321,3 +321,13 @@ main[data-theme="rose"] .product-buy-row button,main[data-theme="rose"] .cart-em
  .mouse-arrow{display:none}
 }
 @media(prefers-reduced-motion:reduce){.mouse-arrow{display:none}}
+
+
+/* Colour palette selector: three swatches, one consistent storefront layout */
+.theme-switcher button{display:grid;place-items:center;padding:0;overflow:hidden}
+.theme-switcher button.selected{outline:2px solid var(--gold);outline-offset:2px}
+.swatch-dot{display:block;width:17px;height:17px;border-radius:50%;border:1px solid rgba(80,70,55,.3)}
+.swatch-champagne{background:linear-gradient(135deg,#f4f1ea 0 48%,#a88c5d 49% 100%)}
+.swatch-midnight{background:linear-gradient(135deg,#17191d 0 48%,#c6a66e 49% 100%)}
+.swatch-rose{background:linear-gradient(135deg,#f7eeec 0 48%,#a66c79 49% 100%)}
+@media(max-width:760px){.swatch-dot{width:15px;height:15px}}
