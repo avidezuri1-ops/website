@@ -690,3 +690,16 @@ main{background:#10251f!important;color:#e9e4d6!important}
   .store-logo img { width: clamp(230px, 72vw, 290px) !important; height: 88px !important; }
   .store-footer .footer-logo img { width: 210px !important; height: 72px !important; }
 }
+
+
+/* Preview image integration: blend white image mats into the emerald surfaces. */
+.product-art {
+  background: radial-gradient(ellipse at 50% 42%, #315c49 0%, #214335 52%, #183329 100%) !important;
+}
+.product-art img,
+.instagram-image img,
+.store-logo img,
+.store-footer .footer-logo img {
+  mix-blend-mode: multiply !important;
+  background: transparent !important;
+}
