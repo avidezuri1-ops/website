@@ -140,6 +140,10 @@ export default function Storefront() {
         <button className="bag-button" onClick={() => setCartOpen(true)} aria-label={`Open bag, ${itemCount} items`}>BAG <span>{itemCount}</span></button>
       </header>
 
+      <section className="hero-banner" aria-label="Avidezuri fragrance banner">
+        <img src="https://avidezuri.com/images/hero-banner.jpg" alt="Avidezuri fragrance collection banner" />
+      </section>
+
       <section className="editorial-hero" id="story">
         <div className="hero-copy">
           <p className="kicker">THE ART OF FRAGRANCE · EST. AVIDEZURI</p>
