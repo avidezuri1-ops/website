@@ -141,7 +141,7 @@ export default function Storefront() {
       <div className="mouse-arrow" style={{ left: cursor.x, top: cursor.y }} aria-hidden="true"><span>↗</span></div>
       <div className="announcement">COMPLIMENTARY FRAGRANCE EXPERIENCE · CASH ON DELIVERY IN KARACHI</div>
       <header className="store-header">
-        <a className="store-logo" href="#" aria-label="Avidezuri home"><img src="/golden%20logo.png" alt="AVIDEZURI" fetchPriority="high" /></a>
+        <a className="store-logo" href="#" aria-label="Avidezuri home"><img src="/white%20logo.png" alt="AVIDEZURI" fetchPriority="high" /></a>
         <nav aria-label="Main navigation">
           <a href="#catalogue" onClick={() => setCategory("all")}>All fragrances</a><a href="#catalogue" onClick={() => setCategory("exclusive")}>Exclusive</a><a href="#catalogue" onClick={() => setCategory("budget")}>Everyday</a>
         </nav>
@@ -229,7 +229,7 @@ export default function Storefront() {
       </section>
 
       <footer className="store-footer">
-        <a className="store-logo footer-logo" href="#" aria-label="Avidezuri home"><img src="/golden%20logo.png" alt="AVIDEZURI" loading="lazy" /></a>
+        <a className="store-logo footer-logo" href="#" aria-label="Avidezuri home"><img src="/white%20logo.png" alt="AVIDEZURI" loading="lazy" /></a>
         <span>THE ART OF FRAGRANCE</span><span>© {new Date().getFullYear()} AVIDEZURI</span>
       </footer>
 
