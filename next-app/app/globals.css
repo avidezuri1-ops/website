@@ -666,3 +666,27 @@ main{background:#10251f!important;color:#e9e4d6!important}
   filter: invert(1) grayscale(1) !important;
   mix-blend-mode: screen !important;
 }
+
+
+/* Use the supplied golden logo as-is; remove legacy invert/screen blend treatments. */
+.store-logo img,
+.store-footer .footer-logo img {
+  display: block !important;
+  width: clamp(300px, 27vw, 380px) !important;
+  height: 116px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+.store-footer .footer-logo img { width: clamp(190px, 20vw, 250px) !important; height: 78px !important; }
+@media(max-width:760px){
+  .store-logo img { width: clamp(230px, 72vw, 290px) !important; height: 88px !important; }
+  .store-footer .footer-logo img { width: 210px !important; height: 72px !important; }
+}
