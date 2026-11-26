@@ -51,7 +51,6 @@ const deliveryAreas = deliveryZones.flatMap((zone) => zone.areas.map((area) => (
 
 export default function Storefront() {
   const [category, setCategory] = useState<"all" | "budget" | "exclusive">("all");
-  const [theme, setTheme] = useState<"champagne" | "midnight" | "rose">("champagne");
   const [cursor, setCursor] = useState({ x: -100, y: -100 });
 
   useEffect(() => {
@@ -138,7 +137,7 @@ export default function Storefront() {
   }
 
   return (
-    <main data-theme={theme}>
+    <main>
       <div className="mouse-arrow" style={{ left: cursor.x, top: cursor.y }} aria-hidden="true"><span>↗</span></div>
       <div className="announcement">COMPLIMENTARY FRAGRANCE EXPERIENCE · CASH ON DELIVERY IN KARACHI</div>
       <header className="store-header">
@@ -147,11 +146,6 @@ export default function Storefront() {
           <a href="#catalogue" onClick={() => setCategory("all")}>All fragrances</a><a href="#catalogue" onClick={() => setCategory("exclusive")}>Exclusive</a><a href="#catalogue" onClick={() => setCategory("budget")}>Everyday</a>
         </nav>
         <div className="header-actions">
-          <div className="theme-switcher" role="group" aria-label="Choose colour theme">
-            <button className={theme === "champagne" ? "selected" : ""} onClick={() => setTheme("champagne")} aria-label="Champagne theme" title="Champagne"><span className="swatch-dot swatch-champagne" /></button>
-            <button className={theme === "midnight" ? "selected" : ""} onClick={() => setTheme("midnight")} aria-label="Midnight theme" title="Midnight"><span className="swatch-dot swatch-midnight" /></button>
-            <button className={theme === "rose" ? "selected" : ""} onClick={() => setTheme("rose")} aria-label="Rose theme" title="Rose"><span className="swatch-dot swatch-rose" /></button>
-          </div>
           <button className="bag-button" onClick={() => setCartOpen(true)} aria-label={`Open bag, ${itemCount} items`}>BAG <span>{itemCount}</span></button>
         </div>
       </header>

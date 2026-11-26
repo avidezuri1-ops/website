@@ -331,3 +331,77 @@ main[data-theme="rose"] .product-buy-row button,main[data-theme="rose"] .cart-em
 .swatch-midnight{background:linear-gradient(135deg,#17191d 0 48%,#c6a66e 49% 100%)}
 .swatch-rose{background:linear-gradient(135deg,#f7eeec 0 48%,#a66c79 49% 100%)}
 @media(max-width:760px){.swatch-dot{width:15px;height:15px}}
+
+
+/* Avidezuri signature finish: one warm, cohesive luxury palette */
+:root{
+  --ink:#51483d;
+  --paper:#f3eee4;
+  --muted:#8c8170;
+  --line:rgba(92,78,59,.18);
+  --gold:#ad9064;
+}
+body{background:#f3eee4;color:#51483d}
+main{background:#f3eee4;color:#51483d}
+.announcement{
+  background:#8c806d;
+  color:#f5eee2;
+}
+.store-header{
+  min-height:112px;
+  height:112px;
+  background:#f3eee4;
+}
+.store-logo img{
+  width:clamp(190px,18vw,238px);
+  height:76px;
+  object-fit:contain;
+  object-position:left center;
+}
+.header-actions{gap:0}
+.editorial-hero{background:#f3eee4}
+.hero-intro{color:#756b5e}
+.hero-visual:before{background:radial-gradient(circle,rgba(190,169,132,.42),rgba(190,169,132,0) 70%)}
+.visual-pedestal{background:linear-gradient(180deg,#ded2bd,#b9a98d 50%,#94836a)}
+.collection-strip{background:#e8dfd0}
+.product-art{background:linear-gradient(145deg,#eee7da,#e4dac9 55%,#d8cbb7)}
+.product-art img{mix-blend-mode:multiply}
+.new-tag{background:#88765c;color:#fbf5e9}
+.product-category{color:#75664f}
+.product-buy-row button{
+  background:#8c806d;
+  border-color:#8c806d;
+  color:#fbf5e9;
+}
+.product-buy-row button:hover{background:#70634f;border-color:#70634f}
+.size-options button.selected{
+  color:#51483d;
+  background:#e5dac8;
+  border-color:#ad9064;
+  box-shadow:inset 0 0 0 1px #ad9064;
+}
+.brand-note{
+  background:#8c806d;
+  color:#f7f0e5;
+}
+.brand-note .kicker{color:#e4d5bd}
+.brand-note h2 i{color:#e2c79c}
+.brand-note>p:not(.kicker){color:#f0e6d7}
+.light-link{border-color:#e7d8bf;color:#fbf5e9}
+.cart-panel{background:#f3eee4;color:#51483d}
+.cart-empty button,.checkout-form .checkout-placeholder{
+  background:#8c806d;
+  color:#fbf5e9;
+}
+.checkout-form input,.checkout-form select,.checkout-form textarea{
+  background:#f8f4ec;
+  color:#51483d;
+}
+.store-footer{background:#f3eee4}
+.mouse-arrow{border-color:#ad9064;color:#ad9064}
+@media(max-width:760px){
+  .store-header{min-height:104px;height:auto;padding:10px 5vw 8px}
+  .store-logo img{width:174px;height:58px}
+  .header-actions{gap:0}
+  .store-header nav{font-size:9px}
+}
