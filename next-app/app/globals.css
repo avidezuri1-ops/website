@@ -274,3 +274,50 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}button{color:inhe
   .product-buy-row strong{font-size:13px}
   .product-buy-row button{font-size:8px;padding:10px 8px;min-height:38px}
 }
+
+
+/* Theme selection, refined motion and custom pointer accent */
+main{--ink:#191916;--paper:#f4f1ea;--muted:#898477;--line:rgba(25,25,22,.16);--gold:#a88c5d;background:var(--paper);color:var(--ink);transition:background .45s ease,color .45s ease;min-height:100vh}
+main[data-theme="midnight"]{--ink:#f1ede5;--paper:#17191d;--muted:#b2ac9f;--line:rgba(241,237,229,.2);--gold:#c6a66e}
+main[data-theme="midnight"] .announcement,main[data-theme="midnight"] .brand-note{background:#0d0f12}
+main[data-theme="midnight"] .store-header,main[data-theme="midnight"] .store-footer{background:#17191d}
+main[data-theme="midnight"] .collection-strip{background:#22252a}
+main[data-theme="midnight"] .product-art{background:linear-gradient(145deg,#303238,#24272d 55%,#1d2025)}
+main[data-theme="midnight"] .product-art img{mix-blend-mode:normal}
+main[data-theme="midnight"] .product-category,main[data-theme="midnight"] .product-title-row h3,main[data-theme="midnight"] .product-buy-row strong,main[data-theme="midnight"] .size-options button{color:var(--ink)}
+main[data-theme="midnight"] .size-options button.selected{background:#35302a;border-color:var(--gold)}
+main[data-theme="midnight"] .product-buy-row button,main[data-theme="midnight"] .cart-empty button,main[data-theme="midnight"] .checkout-form .checkout-placeholder{background:#c6a66e;color:#17191d;border-color:#c6a66e}
+main[data-theme="midnight"] .cart-panel{background:#202329;color:#f1ede5}
+main[data-theme="midnight"] .checkout-form input,main[data-theme="midnight"] .checkout-form select,main[data-theme="midnight"] .checkout-form textarea{background:#17191d;color:#f1ede5}
+main[data-theme="rose"]{--ink:#34262b;--paper:#f7eeec;--muted:#927d80;--line:rgba(75,48,57,.18);--gold:#a66c79}
+main[data-theme="rose"] .announcement,main[data-theme="rose"] .brand-note{background:#49353e}
+main[data-theme="rose"] .store-header,main[data-theme="rose"] .store-footer{background:#f7eeec}
+main[data-theme="rose"] .collection-strip{background:#efe0df}
+main[data-theme="rose"] .product-art{background:linear-gradient(145deg,#f1e4e1,#ead9d7 55%,#e0cccb)}
+main[data-theme="rose"] .product-buy-row button,main[data-theme="rose"] .cart-empty button,main[data-theme="rose"] .checkout-form .checkout-placeholder{background:#704c59;color:#fff;border-color:#704c59}
+.store-logo{display:inline-flex;align-items:center;letter-spacing:0}
+.store-logo img{display:block;width:clamp(116px,12vw,154px);height:48px;object-fit:contain;object-position:left center}
+.header-actions{justify-self:end;display:flex;align-items:center;gap:20px}
+.store-header nav a{font-weight:600;transition:color .25s,opacity .25s}
+.store-header nav a:hover{color:var(--gold);opacity:1}
+.theme-switcher{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--line);border-radius:30px}
+.theme-switcher button{width:25px;height:25px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:8px;cursor:pointer;transition:background .25s,color .25s,transform .25s}
+.theme-switcher button.selected{background:var(--ink);color:var(--paper);transform:scale(1.04)}
+.mouse-arrow{position:fixed;z-index:50;pointer-events:none;width:30px;height:30px;margin:-3px 0 0 -3px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:15px;opacity:0;transform:scale(.65) rotate(-20deg);transition:opacity .2s,transform .18s ease-out;mix-blend-mode:difference}
+@media(hover:hover) and (pointer:fine){.mouse-arrow{opacity:.85}.mouse-arrow span{display:block;line-height:1}}
+.product-card{transition:transform .4s cubic-bezier(.2,.7,.2,1),filter .4s}
+.product-card:hover{transform:translateY(-5px)}
+.product-art{transition:background .4s ease}
+.product-buy-row button,.size-options button,.filter-tabs button,.theme-switcher button{transition:all .25s ease}
+.collection-strip>a:hover b{color:var(--gold);transform:translateX(4px)}
+.collection-strip>a b{transition:transform .25s,color .25s}
+@media(max-width:760px){
+ .store-header{height:auto;min-height:70px;padding:10px 5vw 8px;grid-template-columns:1fr auto;row-gap:7px}
+ .store-header nav{display:flex;grid-column:1/-1;grid-row:2;justify-content:space-between;gap:10px;padding:0 0 5px;font-size:8px;letter-spacing:.08em}
+ .store-logo img{width:112px;height:42px}
+ .header-actions{gap:10px}
+ .theme-switcher{gap:2px}
+ .theme-switcher button{width:22px;height:22px;font-size:7px}
+ .mouse-arrow{display:none}
+}
+@media(prefers-reduced-motion:reduce){.mouse-arrow{display:none}}

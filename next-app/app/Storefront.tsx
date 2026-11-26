@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Product = {
   name: string;
@@ -51,6 +51,14 @@ const deliveryAreas = deliveryZones.flatMap((zone) => zone.areas.map((area) => (
 
 export default function Storefront() {
   const [category, setCategory] = useState<"all" | "budget" | "exclusive">("all");
+  const [theme, setTheme] = useState<"champagne" | "midnight" | "rose">("champagne");
+  const [cursor, setCursor] = useState({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const move = (event: PointerEvent) => setCursor({ x: event.clientX, y: event.clientY });
+    window.addEventListener("pointermove", move, { passive: true });
+    return () => window.removeEventListener("pointermove", move);
+  }, []);
   const [search, setSearch] = useState("");
   const [selectedSizes, setSelectedSizes] = useState<Record<string, number>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -130,19 +138,23 @@ export default function Storefront() {
   }
 
   return (
-    <main>
+    <main data-theme={theme}>
+      <div className="mouse-arrow" style={{ left: cursor.x, top: cursor.y }} aria-hidden="true"><span>↗</span></div>
       <div className="announcement">COMPLIMENTARY FRAGRANCE EXPERIENCE · CASH ON DELIVERY IN KARACHI</div>
       <header className="store-header">
-        <a className="store-logo" href="#" aria-label="Avidezuri home">AVIDEZURI<span>®</span></a>
+        <a className="store-logo" href="#" aria-label="Avidezuri home"><img src="/logo.png" alt="AVIDEZURI" /></a>
         <nav aria-label="Main navigation">
-          <a href="#collections">Collections</a><a href="#catalogue">Shop all</a><a href="#story">Our story</a>
+          <a href="#catalogue" onClick={() => setCategory("all")}>All fragrances</a><a href="#catalogue" onClick={() => setCategory("exclusive")}>Exclusive</a><a href="#catalogue" onClick={() => setCategory("budget")}>Everyday</a>
         </nav>
-        <button className="bag-button" onClick={() => setCartOpen(true)} aria-label={`Open bag, ${itemCount} items`}>BAG <span>{itemCount}</span></button>
+        <div className="header-actions">
+          <div className="theme-switcher" role="group" aria-label="Choose colour theme">
+            <button className={theme === "champagne" ? "selected" : ""} onClick={() => setTheme("champagne")} aria-label="Champagne theme" title="Champagne">01</button>
+            <button className={theme === "midnight" ? "selected" : ""} onClick={() => setTheme("midnight")} aria-label="Midnight theme" title="Midnight">02</button>
+            <button className={theme === "rose" ? "selected" : ""} onClick={() => setTheme("rose")} aria-label="Rose theme" title="Rose">03</button>
+          </div>
+          <button className="bag-button" onClick={() => setCartOpen(true)} aria-label={`Open bag, ${itemCount} items`}>BAG <span>{itemCount}</span></button>
+        </div>
       </header>
-
-      <section className="hero-banner" aria-label="Avidezuri fragrance banner">
-        <img src="https://avidezuri.com/images/hero-banner.jpg" alt="Avidezuri fragrance collection banner" />
-      </section>
 
       <section className="editorial-hero" id="story">
         <div className="hero-copy">
