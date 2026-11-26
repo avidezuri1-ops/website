@@ -703,3 +703,12 @@ main{background:#10251f!important;color:#e9e4d6!important}
   mix-blend-mode: multiply !important;
   background: transparent !important;
 }
+
+
+/* White logo asset: preserve its white artwork on the emerald surfaces. */
+.store-logo img,
+.store-footer .footer-logo img {
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  background: transparent !important;
+}
