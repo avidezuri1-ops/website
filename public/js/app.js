@@ -9,7 +9,10 @@ var CONFIG = {
     { fee: 400, areas: ["Bin Qasim", "Steel Town", "Gadap", "Surjani Town", "Hawksbay", "Manghopir", "Bahria Town Karachi", "DHA City", "Gulshan-e-Hadeed", "Other area in Karachi"] }
   ],
   prices: [1450, 1750, 2250],    // Budget Friendly prices: 30 ml, 50 ml, 100 ml
-  products: [                    // add or remove names here; one per line
+  products: [                    // New exclusive arrivals appear first
+    "DE MARJ",
+    "DE IGNITE OUD",
+    "DE SUMMER OUD",
     "DE WANTED",
     "DE NIGHT",
     "DE FLORA",
@@ -40,7 +43,7 @@ var CONFIG = {
 
 var PALETTE = ["#c8872b", "#c46a7b", "#3f8fb5", "#6f8a4f", "#7a5aa6", "#cdb77a", "#8e2f45", "#2f8f86"];
 var EXCLUSIVE_PRODUCTS = [
-  "DE ANGEL", "DE DESIRE", "DE NIGHT", "DE AQUA", "DE WOMEN", "DE MOUNTAIN",
+  "DE MARJ", "DE IGNITE OUD", "DE SUMMER OUD", "DE ANGEL", "DE DESIRE", "DE NIGHT", "DE AQUA", "DE WOMEN", "DE MOUNTAIN",
   "DE CRISTAL ROUGE", "DE ALEE’SHA", "DE FANTASY", "DE SWIM", "DE BLACK", "DE NOIR"
 ];
 var EXCLUSIVE_PRICES = [1750, 2550, 4500];
@@ -48,9 +51,11 @@ function productKey(n){
   return String(n).toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 var exclusiveKeys = EXCLUSIVE_PRODUCTS.map(productKey);
+var NEW_ARRIVALS = ["DE MARJ", "DE IGNITE OUD", "DE SUMMER OUD", "DE NOIR", "DE SWIM", "DE BLACK"].map(productKey);
 CONFIG.products = CONFIG.products.map(function(p, i){
   if(typeof p === "string") p = { name: p };
   p.category = p.category || (exclusiveKeys.indexOf(productKey(p.name)) >= 0 ? "exclusive" : "budget");
+  p.isNew = NEW_ARRIVALS.indexOf(productKey(p.name)) >= 0;
   p.prices = p.prices || (p.category === "exclusive" ? EXCLUSIVE_PRICES : CONFIG.prices);
   p.color = p.color || PALETTE[i % PALETTE.length];
   return p;
@@ -96,7 +101,7 @@ function tryPhoto(art, p){
     // This image is preloaded before insertion; lazy loading on a detached Image can prevent the request from starting.
     img.loading = "eager";
     img.decoding = "async";
-    img.onload = function(){ art.textContent = ""; art.appendChild(img); art.classList.add("photo"); };
+    img.onload = function(){ var badge=art.querySelector(".new-product-badge"); art.textContent = ""; art.appendChild(img); if(badge) art.appendChild(badge); art.classList.add("photo"); };
     img.onerror = function(){ k++; next(); };
     img.src = exts[k] ? base + "." + exts[k] : base;
   })();
@@ -122,6 +127,35 @@ function renderZones(){
   all.forEach(function(a){ var o = el("option", "", a.name); o.value = a.name; o.dataset.fee = a.fee; $("f-area").appendChild(o); });
 }
 
+function renderNewArrivals(){
+  var track=$("new-arrivals-track");
+  if(!track)return;
+  NEW_ARRIVALS.forEach(function(key,index){
+    var p=CONFIG.products.find(function(item){return productKey(item.name)===key;});
+    if(!p)return;
+    var link=el("a","new-arrival-card");
+    link.href="#product-"+slug(p.name);
+    var art=el("div","new-arrival-art");
+    art.innerHTML=bottle(p.color);
+    var badge=el("span","new-product-badge","NEW");
+    art.appendChild(badge);
+    // Use the exact same image loader and relative asset path as the catalogue.
+    // This keeps slider and product-card image behavior in sync.
+    tryPhoto(art,p);
+    link.appendChild(art);
+    var copy=el("div","new-arrival-copy");
+    copy.appendChild(el("small","", "EXCLUSIVE · NEW ARRIVAL"));
+    copy.appendChild(el("strong","",p.name));
+    copy.appendChild(el("span","", "30 ml · "+money(p.prices[0])+"  |  50 ml · "+money(p.prices[1])+"  |  100 ml · "+money(p.prices[2])));
+    copy.appendChild(el("b","", "DISCOVER THE FRAGRANCE ↗"));
+    link.appendChild(copy);
+    track.appendChild(link);
+  });
+  var previous=$("new-arrivals-prev"),next=$("new-arrivals-next");
+  if(previous)previous.onclick=function(){track.scrollBy({left:-track.clientWidth*.82,behavior:"smooth"});};
+  if(next)next.onclick=function(){track.scrollBy({left:track.clientWidth*.82,behavior:"smooth"});};
+}
+
 function renderList(){
   var list = $("list");
   list.textContent = "";
@@ -135,6 +169,7 @@ function renderList(){
     art.style.setProperty("--tint", p.color);
     art.innerHTML = bottle(p.color);
     tryPhoto(art, p);
+    if(p.isNew) art.appendChild(el("span", "new-product-badge", "NEW"));
     var body = el("div", "body");
     body.appendChild(el("div", "cname", p.name));
     var pills = el("div", "pills");
@@ -481,6 +516,7 @@ function initMotionEffects(){
 }
 
 renderZones();
+renderNewArrivals();
 renderList();
 renderSummary();
 initMotionEffects();

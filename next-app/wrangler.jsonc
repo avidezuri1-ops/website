@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "avidezuri-next-preview",
+  "workers_dev": true,
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "avidezuri-preview",
+      "database_id": "09ad3f01-e071-46d2-ab12-1abf48609593"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

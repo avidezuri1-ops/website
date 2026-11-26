@@ -1,0 +1,55 @@
+/* Mobile/tablet layout repair for the immersive showroom.
+   Desktop catalogue remains four columns; compact screens use two readable columns. */
+@media (max-width: 820px) {
+  html, body { width:100%; max-width:100%; overflow-x:clip; }
+  .wrap { width:calc(100% - 28px); }
+  .topbar-inner { width:calc(100% - 24px); min-height:66px; gap:8px; }
+  .brandmark { width:clamp(128px,42vw,174px); max-width:46vw; }
+  .top-actions { gap:8px; min-width:0; }
+  .top-actions a { display:none !important; }
+  .top-note { max-width:104px; white-space:normal; text-align:center; line-height:1.25; padding:5px 7px; font-size:.56rem; }
+
+  .hero { height:auto; min-height:0; padding:0; }
+  .hero .wrap { height:auto; min-height:620px; align-items:flex-end; padding:108px 0 28px; }
+  .hero-card { width:100%; max-width:none; margin:0; padding:clamp(18px,5vw,26px); text-align:left; }
+  .hero-card h1 { font-size:clamp(2.1rem,8vw,3.35rem); }
+  .hero-card p { font-size:.94rem; line-height:1.5; }
+  .hero-card .hero-cta { display:flex; flex-wrap:wrap; gap:9px; }
+  .hero-card .hero-cta .btn { flex:1 1 145px; min-width:0; padding:13px 12px; text-align:center; }
+  .hero-card .facts { grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-top:18px; padding-top:14px; }
+  .hero-card .facts li { min-width:0; overflow-wrap:anywhere; font-size:.68rem; }
+  .hero-card .facts b { font-size:.78rem; }
+  .showroom-hint { top:18px; right:14px; bottom:auto; max-width:calc(100% - 28px); font-size:.56rem; letter-spacing:.12em; }
+
+  #shop .grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:18px 10px; }
+  #shop .card { min-width:0; padding:8px; }
+  #shop .art { aspect-ratio:4/5; }
+  #shop .cname { min-height:2.5em; justify-content:center; font-size:clamp(.72rem,2.5vw,.88rem); letter-spacing:.045em; overflow-wrap:anywhere; }
+  #shop .pills { flex-wrap:wrap; gap:5px; }
+  #shop .pill { min-width:0; min-height:34px; padding:6px 8px; font-size:.72rem; }
+  #shop .stepper { max-width:100%; }
+  #shop .stepper button { width:36px; min-width:36px; }
+
+  .new-arrivals-heading { align-items:flex-start; }
+  .new-arrivals-track { gap:12px; }
+  .new-arrival-card { flex-basis:min(78vw,340px); min-width:0; }
+  .new-arrival-copy strong { font-size:1rem; overflow-wrap:anywhere; }
+  .featured-track { gap:12px; }
+  .featured-card { flex-basis:min(78vw,340px); }
+  .campaign-grid { grid-template-columns:1fr; }
+  .campaign-banner { min-height:250px; }
+  .order-layout { grid-template-columns:minmax(0,1fr); }
+  .order-panel { min-width:0; }
+  #bar { max-width:calc(100vw - 24px); white-space:normal; }
+}
+@media (max-width:380px) {
+  .hero .wrap { min-height:650px; padding-top:96px; }
+  .hero-card { padding:18px 15px; }
+  .hero-card .facts { gap:4px; }
+  .hero-card .facts li { font-size:.62rem; }
+  .hero-card .facts b { font-size:.72rem; }
+  #shop .card { padding:6px; }
+  #shop .pills { gap:4px; }
+  #shop .pill { padding:5px 6px; font-size:.68rem; }
+  #shop .stepper button { width:32px; min-width:32px; }
+}
