@@ -642,3 +642,14 @@ main{background:#10251f!important;color:#e9e4d6!important}
  .store-footer .footer-logo img{width:190px!important;height:68px!important}
 }
 @media(prefers-reduced-motion:reduce){.instagram-image img{transition:none}}
+
+
+/* Logo fix: remove the pale logo plates on both header and footer */
+.store-logo img,
+.store-footer .footer-logo img {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
